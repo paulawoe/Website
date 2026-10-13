@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Paula Wörndl – 3D Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --light:#F2F3F5; --light-ink:#15171B; --light-mute:#7A7F89; --light-accent:#2F54FF;
+  --dark:#101114; --dark-ink:#ECEDEF; --dark-mute:#7F8590; --dark-accent:#7C9BFF;
+  --ease:cubic-bezier(.65,0,.2,1);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;height:100%;background:var(--dark);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--light-accent);outline-offset:-4px}
+
+/* header */
+.bar{position:fixed;z-index:10;top:env(safe-area-inset-top,0px);left:0;right:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:start;gap:16px;padding:22px clamp(16px,2.2vw,32px);color:#fff;mix-blend-mode:difference;pointer-events:none;font-family:"DM Mono",ui-monospace,Menlo,monospace;font-size:12px;line-height:1.35;font-weight:500;text-transform:uppercase;letter-spacing:.02em}
+.bar.foot{top:auto;bottom:env(safe-area-inset-bottom,0px)}
+.bar nav{display:flex;gap:clamp(14px,2vw,32px);justify-self:end}
+.bar .r{display:flex;justify-content:space-between;gap:24px}
+.bar a{pointer-events:auto;color:inherit;text-decoration:none}
+.bar nav a.on{text-decoration:underline;text-underline-offset:4px}
+.ft{max-width:26ch}
+.is-home .bk{visibility:hidden}
+
+/* home: two chapters, split by a vertical line */
+#home{display:flex;height:100%}
+.half{position:relative;flex:1 1 0;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;transition:flex .7s var(--ease)}
+.half:hover,.half:focus-visible{flex-grow:1.25}
+.half.a{background:var(--light);color:var(--light-ink)}
+.half.b{background:var(--dark);color:var(--dark-ink)}
+.half .txt{position:relative;z-index:1}
+.half h2{margin:0;font-weight:500;font-size:clamp(40px,6vw,100px);line-height:.95;letter-spacing:-.03em}
+.half p{margin:18px auto 0;font-size:16px;max-width:30ch;color:var(--light-mute)}
+.half.b p{color:var(--dark-mute)}
+.half .go{margin-top:28px;font-size:15px;font-weight:500;display:inline-flex;gap:10px;align-items:center}
+.half.a .go{color:var(--light-accent)} .half.b .go{color:var(--dark-accent)}
+.half .go i{display:inline-block;width:28px;height:1px;background:currentColor;transition:width .5s var(--ease)}
+.half:hover .go i{width:56px}
+/* background "image": blurred, sharp on hover */
+.stage{position:absolute;inset:-5%;display:grid;place-items:center;filter:blur(30px);transform:scale(1.08);transition:filter .8s var(--ease),transform .8s var(--ease)}
+.half:hover .stage,.half:focus-visible .stage{filter:blur(0);transform:scale(1)}
+@media (hover:none){.stage{filter:blur(10px)}}
+
+.blob{width:min(34vmin,320px);aspect-ratio:1;background:var(--light-ink);animation:morph 9s ease-in-out infinite,spin 24s linear infinite}
+.stage .blob{width:min(60vmin,560px);background:#CFD3DB}
+@keyframes morph{0%,100%{border-radius:50%}25%{border-radius:12% 88% 30% 70%/60% 30% 70% 40%}50%{border-radius:8%}75%{border-radius:70% 30% 60% 40%/30% 70% 30% 70%}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.scene{--z:min(11vmin,100px);width:min(22vmin,200px);aspect-ratio:1;perspective:900px}
+.stage .scene{--z:min(18vmin,170px);width:min(36vmin,340px)}
+.cube{position:relative;width:100%;height:100%;transform-style:preserve-3d;animation:cube 16s linear infinite}
+.cube span{position:absolute;inset:0;border:1px solid var(--dark-accent);background:rgba(124,155,255,.08)}
+.cube span:nth-child(1){transform:translateZ(var(--z))}.cube span:nth-child(2){transform:rotateY(180deg) translateZ(var(--z))}
+.cube span:nth-child(3){transform:rotateY(90deg) translateZ(var(--z))}.cube span:nth-child(4){transform:rotateY(-90deg) translateZ(var(--z))}
+.cube span:nth-child(5){transform:rotateX(90deg) translateZ(var(--z))}.cube span:nth-child(6){transform:rotateX(-90deg) translateZ(var(--z))}
+@keyframes cube{from{transform:rotateX(-24deg) rotateY(0)}to{transform:rotateX(-24deg) rotateY(360deg)}}
+
+/* detail views */
+.detail{min-height:100%;padding:112px clamp(20px,3vw,44px) 64px}
+.detail[hidden]{display:none}
+.detail.a{background:var(--light);color:var(--light-ink)}
+.detail.b{background:var(--dark);color:var(--dark-ink)}
+.back{font-size:15px;font-weight:500;margin-bottom:40px;display:block}
+.detail.a .back{color:var(--light-accent)} .detail.b .back{color:var(--dark-accent)}
+.detail h1{margin:0 0 48px;font-weight:500;font-size:clamp(40px,6vw,88px);letter-spacing:-.03em;line-height:1}
+.txtp{max-width:44ch;line-height:1.5;margin:0 0 1em}
+.grid{display:grid;gap:clamp(12px,1.6vw,24px);grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr))}
+.tile{position:relative;overflow:hidden;display:grid;place-items:center;border-radius:4px;aspect-ratio:1;background:#191B20}
+.tile .t{position:absolute;left:16px;bottom:14px;font-size:14px;color:var(--dark-mute)}
+.tile .scene{--z:min(5vmin,44px);width:min(10vmin,88px)}
+
+/* carousel (A) */
+.detail.carousel{height:100%;min-height:0;padding:0;overflow:hidden;position:relative;touch-action:none;user-select:none;-webkit-user-select:none}
+.item .blob{background:var(--light-ink);width:40%}
+.cstage{position:absolute;inset:0;overflow:hidden}
+#track{position:absolute;left:0;top:0;height:0;will-change:transform}
+.item{position:absolute;top:0;cursor:pointer}
+.item .media{position:absolute;inset:0;overflow:hidden;display:grid;place-items:center}
+.cap{position:absolute;left:0;bottom:100%;margin-bottom:18px;font-size:14px;line-height:1.4;pointer-events:none;white-space:nowrap}
+.cap i{display:block;font-style:normal;margin-bottom:26px}
+.cap b{display:block;font-weight:500}
+.cap span{display:block;color:var(--light-mute)}
+.hint{position:absolute;bottom:calc(96px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);font-size:14px;color:var(--light-mute);white-space:nowrap}
+/* project page */
+.pj{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:clamp(24px,4vw,72px);align-items:start}
+.pj dl{margin:0 0 32px;display:grid;gap:14px}
+.pj dt{font-size:14px;color:var(--light-mute)}
+.pj dd{margin:2px 0 0}
+.pm{aspect-ratio:16/9;background:#DFE2E7;display:grid;place-items:center;overflow:hidden;margin-bottom:clamp(12px,1.6vw,24px)}
+.pm .blob{width:22%;background:var(--light-ink)}
+
+@media (max-width:760px){
+  #home{flex-direction:column}
+  .half:hover,.half:focus-visible{flex-grow:1}
+  .half p{display:none}
+  .bar{grid-template-columns:1fr auto;row-gap:8px;font-size:11px}
+  .bar nav{grid-column:1/-1;justify-self:start;gap:14px;order:3}
+  .bar .r{display:none}
+  .pj{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <a href="#" data-go="home">Paula Wörndl</a>
+  <a href="#" class="bk">(Zurück)</a>
+  <nav>
+    <a href="#" data-go="a">3D Motion Design</a>
+    <a href="#" data-go="b">Gaming Assets</a>
+    <a href="#" data-go="about">About</a>
+  </nav>
+</header>
+
+<footer class="bar foot">
+  <a href="#" data-go="home">Paula Wörndl</a>
+  <a href="#" class="bk">(Zurück)</a>
+  <div class="r">
+    <div class="ft" id="ft"></div>
+    <nav>
+      <a href="#" data-go="a">3D Motion Design</a>
+      <a href="#" data-go="b">Gaming Assets</a>
+      <a href="#" data-go="about">About</a>
+    </nav>
+  </div>
+</footer>
+
+<main id="home">
+  <button class="half a" data-open="a" aria-label="3D Motion Design öffnen">
+    <div class="stage"><div class="blob"></div></div>
+    <div class="txt"><h2>3D Motion<br>Design</h2><p>Animationen, Loops und Kurzfilme.</p><span class="go">Ansehen <i></i></span></div>
+  </button>
+  <button class="half b" data-open="b" aria-label="Gaming Assets öffnen">
+    <div class="stage"><div class="scene"><div class="cube"><span></span><span></span><span></span><span></span><span></span><span></span></div></div></div>
+    <div class="txt"><h2>Gaming<br>Assets</h2><p>Modelle, Props und Environments.</p><span class="go">Ansehen <i></i></span></div>
+  </button>
+</main>
+
+<section class="detail a carousel" id="view-a" hidden>
+  <div class="cstage"><div id="track"></div></div>
+  <div class="hint">Scrollen oder wischen, Klick öffnet das Projekt</div>
+</section>
+
+<section class="detail a" id="view-p" hidden>
+  <div id="pj"></div>
+</section>
+
+<section class="detail b" id="view-b" hidden>
+  <h1>Gaming Assets</h1>
+  <div class="grid" id="grid-b"></div>
+</section>
+
+<section class="detail a" id="view-about" hidden>
+  <h1>About</h1>
+  <p class="txtp">Platzhalter: Ein paar Sätze über dich, deine Arbeit und woran du gerade arbeitest.</p>
+  <p class="txtp">hallo@example.com</p>
+</section>
+
+<script>
+  const home = document.getElementById('home');
+  const views = { a: document.getElementById('view-a'), b: document.getElementById('view-b'), p: document.getElementById('view-p'), about: document.getElementById('view-about') };
+  const cube = '<div class="scene"><div class="cube"><span></span><span></span><span></span><span></span><span></span><span></span></div></div>';
+  document.getElementById('grid-b').innerHTML = Array.from({length:6},()=>`<div class="tile">${cube}<span class="t">Asset-Name</span></div>`).join('');
+
+  function show(key){
+    home.style.display = key ? 'none' : '';
+    Object.entries(views).forEach(([k,el]) => el.hidden = k !== key);
+    document.body.style.background = (key && key !== 'b') ? 'var(--light)' : 'var(--dark)';
+    document.querySelectorAll('.bar nav a').forEach(a => a.classList.toggle('on', a.dataset.go === (key === 'p' ? 'a' : key)));
+    window.scrollTo(0,0);
+    cur = key; document.body.classList.toggle('is-home', !key);
+    setFt((key === 'a' || key === 'p') ? projects[Math.max(activeP,0)] : null);
+    if (key === 'a') startCarousel(); else stopCarousel();
+  }
+  document.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => show(b.dataset.open)));
+  document.querySelectorAll('[data-go]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); show(a.dataset.go === 'home' ? null : a.dataset.go); }));
+  document.querySelectorAll('[data-to]').forEach(b => b.addEventListener('click', () => show(b.dataset.to)));
+  let cur = null;
+  const ftEl = document.getElementById('ft');
+  const setFt = p => { ftEl.innerHTML = p ? p[1] : 'Portfolio 2026<br>3D Motion Design &amp; Gaming Assets'; };
+  document.body.classList.add('is-home'); setFt(null);
+  document.querySelectorAll('.bk').forEach(a => a.addEventListener('click', e => { e.preventDefault(); show(cur === 'p' ? 'a' : null); }));
+
+  /* ---------- Carousel A: endlos, aktives Projekt doppelt so groß, großes Bild im Hintergrund ---------- */
+  const projects = [
+    ['Liquid Chrome','Platzhalter: Kurzbeschreibung des Projekts in ein bis zwei Sätzen.'],
+    ['Soft Machines','Platzhalter: Worum geht es, was war die Idee hinter dem Loop?'],
+    ['Neon Rain','Platzhalter: Stimmung, Look und Technik in einem Satz.'],
+    ['Paper Orbit','Platzhalter: Kurzbeschreibung des Projekts in ein bis zwei Sätzen.'],
+    ['Glass Garden','Platzhalter: Worum geht es, was war die Idee hinter dem Loop?'],
+    ['Slow Tide','Platzhalter: Stimmung, Look und Technik in einem Satz.'],
+    ['Heavy Light','Platzhalter: Kurzbeschreibung des Projekts in ein bis zwei Sätzen.']
+  ];
+  const n = projects.length, reps = 5;
+  const tint = (i,l) => `hsl(${215+(i%n)*14} 12% ${l}%)`;
+  const track = document.getElementById('track'), vA = views.a;
+  track.innerHTML = Array.from({length:n*reps},(_,i) =>
+    `<div class="item" data-i="${i}" role="button" tabindex="0"><div class="media" style="background:${tint(i,89)}"><div class="blob" style="animation-delay:-${(i%n)*1.3}s,0s"></div></div><div class="cap"><i>${String(i%n+1).padStart(2,'0')}.</i><b>${projects[i%n][0]}</b><span>[3D ANIMATION]</span></div></div>`).join('');
+  const items = [...track.children];
+  let pos = 2*n, target = 2*n, raf = 0, dims, dragX = null, moved = 0, snapT, activeP = -1;
+
+  function measure(){
+    const w = innerWidth, h = innerHeight;
+    const bw = Math.min(Math.max(w*.28, 180), 520, h*.52/1.25);
+    dims = { sw: bw/2, bw, sh: bw/2*1.25, bh: bw*1.25, gap: 0, top: (h - bw*1.25)/2 + h*.02 };
+  }
+  function layout(){
+    const { sw,bw,sh,bh,gap,top } = dims; let x = 0; const cx = [];
+    items.forEach((el,i) => {
+      const d = Math.abs(i-pos), k = Math.max(0,1-d), w = sw+(bw-sw)*k, h = sh+(bh-sh)*k;
+      el.style.width = w+'px'; el.style.height = h+'px'; el.style.left = x+'px';
+      el.lastElementChild.style.opacity = Math.max(0, 1-d*2.5);
+      cx.push(x + w/2); x += w + gap;
+    });
+    const i0 = Math.floor(pos), c = cx[i0] + (cx[i0+1] - cx[i0]) * (pos-i0);
+    track.style.transform = `translate(${innerWidth/2 - c}px,${top}px)`;
+    const p = ((Math.round(pos) % n) + n) % n;
+    if (p !== activeP){ activeP = p; if (!vA.hidden) setFt(projects[p]); }
+  }
+  function tick(){
+    pos += (target-pos)*.1; if (Math.abs(target-pos) < .0005) pos = target;
+    if (pos < 2*n){ pos += n; target += n; } else if (pos >= 3*n){ pos -= n; target -= n; }
+    layout(); raf = requestAnimationFrame(tick);
+  }
+  function startCarousel(){ measure(); cancelAnimationFrame(raf); tick(); }
+  function stopCarousel(){ cancelAnimationFrame(raf); }
+  addEventListener('resize', () => { if (!vA.hidden) measure(); });
+
+  vA.addEventListener('wheel', e => {
+    e.preventDefault();
+    const d = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+    target += d/450;
+    clearTimeout(snapT); snapT = setTimeout(() => target = Math.round(target), 140);
+  }, { passive:false });
+  vA.addEventListener('pointerdown', e => { dragX = e.clientX; moved = 0; });
+  addEventListener('pointermove', e => {
+    if (dragX === null) return;
+    const dx = e.clientX - dragX; dragX = e.clientX; moved += Math.abs(dx);
+    target -= dx/(dims.sw + dims.gap);
+  });
+  ['pointerup','pointercancel'].forEach(t => addEventListener(t, () => { if (dragX !== null){ dragX = null; target = Math.round(target); } }));
+  addEventListener('keydown', e => {
+    if (vA.hidden) return;
+    if (e.key === 'ArrowRight') target = Math.round(target)+1;
+    if (e.key === 'ArrowLeft') target = Math.round(target)-1;
+  });
+  items.forEach(el => {
+    const go = () => { const i = +el.dataset.i; if (Math.abs(i-pos) < .5) openProject(i % n); else target = i; };
+    el.addEventListener('click', () => { if (moved < 6) go(); });
+    el.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+  });
+
+  function openProject(i){
+    const p = projects[i];
+    document.getElementById('pj').innerHTML =
+      `<div class="pj"><div><h1>${p[0]}</h1><dl><div><dt>Jahr</dt><dd>2026</dd></div><div><dt>Tools</dt><dd>Blender, After Effects</dd></div><div><dt>Rolle</dt><dd>Modeling, Animation, Rendering</dd></div></dl><p class="txtp">${p[1]}</p><p class="txtp">Platzhalter: Hier steht mehr zum Projekt, etwa Idee, Prozess und Making-of.</p></div><div><div class="pm"><div class="blob"></div></div><div class="pm"><div class="blob" style="animation-delay:-4s,0s"></div></div></div></div>`;
+    show('p');
+  }
+</script>
+</body>
+</html>
