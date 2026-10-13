@@ -82,7 +82,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 /* carousel (A) */
 .detail.carousel{height:100%;min-height:0;padding:0;overflow:hidden;position:relative;touch-action:none;user-select:none;-webkit-user-select:none}
 .item .blob{background:var(--light-ink);width:40%}
-.item .media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.item .media video,.item .media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .cstage{position:absolute;inset:0;overflow:hidden}
 #track{position:absolute;left:0;top:0;height:0;will-change:transform}
 .item{position:absolute;top:0;cursor:pointer}
@@ -100,7 +100,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .pm{aspect-ratio:16/9;background:#DFE2E7;display:grid;place-items:center;overflow:hidden;margin-bottom:clamp(12px,1.6vw,24px)}
 .pm .blob{width:22%;background:var(--light-ink)}
 .pm{position:relative}
-.pm video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.pm video,.pm img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 
 @media (max-width:760px){
   #home{flex-direction:column}
@@ -212,10 +212,17 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
     ['Heavy Light','Platzhalter: Kurzbeschreibung des Projekts in ein bis zwei Sätzen.','videos/heavy-light.mp4']
   ];
   const n = projects.length, reps = 5;
+  /* Bilder (png, jpg, webp, gif) und Videos (mp4) werden automatisch erkannt */
+  const isImg = f => /\.(png|jpe?g|webp|gif|avif)$/i.test(f || '');
+  const mediaTag = (f, mode) => !f ? '' : isImg(f)
+    ? `<img src="${f}" alt="" draggable="false" onerror="this.remove()">`
+    : mode === 'tile'
+      ? `<video src="${f}#t=0.1" muted loop playsinline preload="metadata" onerror="this.remove()"></video>`
+      : `<video src="${f}" autoplay muted loop playsinline controls onerror="this.remove()"></video>`;
   const tint = (i,l) => `hsl(${215+(i%n)*14} 12% ${l}%)`;
   const track = document.getElementById('track'), vA = views.a;
   track.innerHTML = Array.from({length:n*reps},(_,i) =>
-    `<div class="item" data-i="${i}" role="button" tabindex="0"><div class="media" style="background:${tint(i,89)}"><div class="blob" style="animation-delay:-${(i%n)*1.3}s,0s"></div><video src="${projects[i%n][2]}#t=0.1" muted loop playsinline preload="metadata" onerror="this.remove()"></video></div><div class="cap"><i>${String(i%n+1).padStart(2,'0')}.</i><b>${projects[i%n][0]}</b><span>[3D ANIMATION]</span></div></div>`).join('');
+    `<div class="item" data-i="${i}" role="button" tabindex="0"><div class="media" style="background:${tint(i,89)}"><div class="blob" style="animation-delay:-${(i%n)*1.3}s,0s"></div>${mediaTag(projects[i%n][2], 'tile')}</div><div class="cap"><i>${String(i%n+1).padStart(2,'0')}.</i><b>${projects[i%n][0]}</b><span>[3D ANIMATION]</span></div></div>`).join('');
   const items = [...track.children];
   /* Videos nur abspielen, solange sie im Bild sind (schont Rechner und Handy) */
   const io = new IntersectionObserver(es => es.forEach(e => {
@@ -280,7 +287,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   function openProject(i){
     const p = projects[i];
     document.getElementById('pj').innerHTML =
-      `<div class="pj"><div><h1>${p[0]}</h1><dl><div><dt>Jahr</dt><dd>2026</dd></div><div><dt>Tools</dt><dd>Blender, After Effects</dd></div><div><dt>Rolle</dt><dd>Modeling, Animation, Rendering</dd></div></dl><p class="txtp">${p[1]}</p><p class="txtp">Platzhalter: Hier steht mehr zum Projekt, etwa Idee, Prozess und Making-of.</p></div><div><div class="pm"><div class="blob"></div><video src="${p[3]||p[2]}" autoplay muted loop playsinline controls onerror="this.remove()"></video></div><div class="pm"><div class="blob" style="animation-delay:-4s,0s"></div></div></div></div>`;
+      `<div class="pj"><div><h1>${p[0]}</h1><dl><div><dt>Jahr</dt><dd>2026</dd></div><div><dt>Tools</dt><dd>Blender, After Effects</dd></div><div><dt>Rolle</dt><dd>Modeling, Animation, Rendering</dd></div></dl><p class="txtp">${p[1]}</p><p class="txtp">Platzhalter: Hier steht mehr zum Projekt, etwa Idee, Prozess und Making-of.</p></div><div><div class="pm"><div class="blob"></div>${mediaTag(p[3]||p[2], 'full')}</div><div class="pm"><div class="blob" style="animation-delay:-4s,0s"></div></div></div></div>`;
     show('p');
   }
 </script>
