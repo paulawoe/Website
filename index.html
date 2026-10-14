@@ -319,15 +319,15 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
     const w = innerWidth, h = innerHeight;
     const R = 1320/1080; /* Kachelformat 1080x1320: alle Videos werden darauf zugeschnitten */
     const base = w < 760 ? w*.6 : w*.34;            /* Breite der mittleren Kachel */
-    const bw = Math.min(Math.max(base, 200), 660, h*.62/R, (h-220)/R);
+    const bw = Math.min(Math.max(base, 200), 660, h*.62/R, (h-240)/R);
     const ratio = 2.5;                               /* mittlere Kachel = 2,5x so groß wie die anderen */
-    dims = { sw: bw/ratio, bw, sh: bw/ratio*R, bh: bw*R, gap: 6, top: Math.max(150, (h - bw*R)/2 + h*.02) };
+    dims = { sw: bw/ratio, bw, sh: bw/ratio*R, bh: bw*R, gap: 6, top: Math.max(bw*R/2 + 160, Math.min(h/2 + h*.01, h - 70 - bw*R/2)) };  /* top = Mittellinie, auf der alle Kacheln zentriert sitzen */
   }
   function layout(){
     const { sw,bw,sh,bh,gap,top } = dims; let x = 0; const cx = [];
     items.forEach((el,i) => {
       const d = Math.abs(i-pos), k = Math.max(0,1-d), w = sw+(bw-sw)*k, h = sh+(bh-sh)*k;
-      el.style.width = w+'px'; el.style.height = h+'px'; el.style.left = x+'px';
+      el.style.width = w+'px'; el.style.height = h+'px'; el.style.left = x+'px'; el.style.top = (-h/2)+'px';
       el.lastElementChild.style.opacity = Math.max(0, 1-d*2.5);
       cx.push(x + w/2); x += w + gap;
     });
