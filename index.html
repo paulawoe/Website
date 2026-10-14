@@ -199,8 +199,8 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
      - 5. Feld (optional): Link zu Fab, Gumroad usw. Ohne Link gibt es einen direkten .glb-Download. */
   const assets = [
     ['Cat statue','Kurzbeschreibung des Assets.','models/cat.glb','models/asset-01.png'],
-    ['Asset Zwei','Kurzbeschreibung des Assets.','models/asset-02.glb','models/asset-02.png'],
-    ['Asset Drei','Nur Still, ohne 3D-Modell.','','models/asset-03.png']
+    ['Blabla','Kurzbeschreibung des Assets.','models/asset-02.glb','models/asset-02.png'],
+    ['XX','Nur Still, ohne 3D-Modell.','','models/asset-03.png']
   ];
   document.getElementById('grid-b').innerHTML = assets.map((a,i) =>
     `<div class="tile" data-i="${i}" role="button" tabindex="0">${cube}${a[3] ? `<img src="${a[3]}" alt="" onerror="this.remove()">` : ''}<span class="t">${a[0]}</span></div>`).join('');
