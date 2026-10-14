@@ -6,12 +6,13 @@
 <title>Paula Wörndl – 3D Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --light:#FFFFFF; --light-ink:#000000; --light-mute:#7A7A7A; --light-accent:#000000;
   --dark:#000000; --dark-ink:#FFFFFF; --dark-mute:#8A8A8A; --dark-accent:#FFFFFF;
   --tile:#141414; --line:#2E2E2E;
+  --hbar-h:58px; --fbar-h:58px;
   --ease:cubic-bezier(.65,0,.2,1);
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
@@ -29,9 +30,17 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .bar a{pointer-events:auto;color:inherit;text-decoration:none}
 .bar nav a.on{text-decoration:underline;text-underline-offset:4px}
 .is-home .bk{visibility:hidden}
+.bar.foot{top:auto;bottom:env(safe-area-inset-bottom,0px);background:#000;color:#fff;mix-blend-mode:normal;height:var(--fbar-h);padding-top:0;padding-bottom:0;align-items:center;align-content:center}
+.ct{display:flex;align-items:baseline;gap:clamp(14px,2vw,28px)}
+.ct span{opacity:.5}
+.cr{justify-self:end}
+/* Startseite: Kopf- und Fußzeile als weiße Balken */
+.is-home .bar{background:#fff;color:#000;mix-blend-mode:normal;height:var(--hbar-h);padding-top:0;padding-bottom:0;align-items:center;align-content:center}
+.is-home .bar.foot{height:var(--fbar-h);background:#000;color:#fff}
 
 /* home: two chapters, split by a vertical line */
-#home{display:flex;height:100%}
+/* Startseite: zwei Bänder übereinander (horizontale Teilung). Für nebeneinander: column -> row */
+#home{display:flex;flex-direction:column;height:100%;padding:var(--hbar-h) 0 var(--fbar-h)}
 .half{position:relative;flex:1 1 0;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;transition:flex .7s var(--ease)}
 .half:hover,.half:focus-visible{flex-grow:1.25}
 .half.a{background:var(--light);color:var(--light-ink)}
@@ -40,10 +49,6 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .half h2{margin:0;font-weight:500;font-size:clamp(34px,5vw,84px);line-height:1;letter-spacing:-.04em}
 .half p{margin:18px auto 0;font-size:16px;max-width:30ch;color:var(--light-mute)}
 .half.b p{color:var(--dark-mute)}
-.half .go{margin-top:28px;font-size:15px;font-weight:500;display:inline-flex;gap:10px;align-items:center}
-.half.a .go{color:var(--light-accent)} .half.b .go{color:var(--dark-accent)}
-.half .go i{display:inline-block;width:28px;height:1px;background:currentColor;transition:width .5s var(--ease)}
-.half:hover .go i{width:56px}
 /* background "image": blurred, sharp on hover */
 .stage{position:absolute;inset:-5%;display:grid;place-items:center;filter:blur(30px);transform:scale(1.08);transition:filter .8s var(--ease),transform .8s var(--ease)}
 .half:hover .stage,.half:focus-visible .stage{filter:blur(0);transform:scale(1)}
@@ -65,7 +70,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 @keyframes cube{from{transform:rotateX(-24deg) rotateY(0)}to{transform:rotateX(-24deg) rotateY(360deg)}}
 
 /* detail views */
-.detail{min-height:100%;padding:112px clamp(20px,3vw,44px) 64px}
+.detail{min-height:100%;padding:112px clamp(20px,3vw,44px) 110px}
 .detail[hidden]{display:none}
 .detail.a{background:var(--light);color:var(--light-ink)}
 .detail.b{background:var(--dark);color:var(--dark-ink)}
@@ -109,7 +114,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .cap i{display:block;font-style:normal;margin-bottom:26px}
 .cap b{display:block;font-weight:500}
 .cap span{display:block;color:var(--light-mute)}
-.hint{position:absolute;bottom:calc(28px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);font-size:14px;color:var(--light-mute);white-space:nowrap}
+.hint{position:absolute;bottom:calc(76px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);font-size:14px;color:var(--light-mute);white-space:nowrap}
 /* project page */
 .pj{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:clamp(24px,4vw,72px);align-items:start}
 .pj dl{margin:0 0 32px;display:grid;gap:14px}
@@ -121,8 +126,35 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .pm{position:relative}
 .pm video,.pm img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 
+/* playground */
+#view-playground h1{margin-bottom:24px}
+.pg-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(24px,3vw,48px);margin-top:48px}
+.pg{display:flex;flex-direction:column;gap:14px}
+.pg .m{position:relative;aspect-ratio:4/5;overflow:hidden;background:#E8E8E8;display:grid;place-items:center}
+.pg .m video,.pg .m img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pg .m .blob{width:34%;background:var(--light-ink)}
+.pg .meta{font-size:12px;text-transform:uppercase;letter-spacing:.02em;color:var(--light-mute);margin-bottom:6px}
+.pg b{display:block;font-weight:500;font-size:16px}
+.pg p{margin:6px 0 0;line-height:1.5;font-size:14px;color:var(--light-mute);max-width:44ch}
+@media (max-width:900px){.pg-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.pg-grid{grid-template-columns:1fr}}
+
+/* Schriften: Überschriften in Inter Tight (Grotesk), Fliesstext und Labels in DM Mono */
+:root{--display:"Inter Tight","Helvetica Neue",Helvetica,Arial,sans-serif}
+.half h2,.detail h1,.pj h1{font-family:var(--display);text-transform:uppercase;font-weight:500;letter-spacing:-.045em;line-height:.92}
+.half h2{font-size:clamp(40px,7vw,120px)}
+.detail h1{font-size:clamp(40px,7vw,112px)}
+.pj h1{font-size:clamp(32px,4vw,60px);line-height:.95}
+.cap b,.pg b,.info b{font-family:var(--display);text-transform:uppercase;font-weight:500;letter-spacing:-.01em}
+.cap b{font-size:16px}
+.pg b{font-size:18px}
+.info b{font-size:14px}
+/* Fliesstext in Grossbuchstaben wie in der Vorlage (diese Regel loeschen = normale Schreibweise) */
+.txtp,.pj dt,.pj dd,.pg p,.pg .meta,.cap span,.info span,.half p,.hint{text-transform:uppercase;letter-spacing:.01em}
+
 @media (max-width:760px){
-  #home{flex-direction:column}
+  :root{--hbar-h:84px}
+  .cr{display:none}
   .half:hover,.half:focus-visible{flex-grow:1}
   .half p{display:none}
   .bar{grid-template-columns:1fr auto;row-gap:8px;font-size:11px}
@@ -143,18 +175,29 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   <nav>
     <a href="#" data-go="a">3D Motion Design</a>
     <a href="#" data-go="b">Gaming Assets</a>
+    <a href="#" data-go="playground">Playground</a>
     <a href="#" data-go="about">About</a>
   </nav>
 </header>
 
+<footer class="bar foot">
+  <div class="ct">
+    <span>Contact</span>
+    <a href="https://www.instagram.com/_paulawoerndl/" target="_blank" rel="noopener">Instagram</a>
+    <a href="mailto:paulawoe@gmail.com">paulawoe@gmail.com</a>
+  </div>
+  <a href="#" class="bk">(Back)</a>
+  <span class="cr">&copy; 2026 Paula Wörndl</span>
+</footer>
+
 <main id="home">
   <button class="half a" data-open="a" aria-label="Open 3D Motion Design">
     <div class="stage"><video src="videos/Amore_2.mp4" autoplay muted loop playsinline></video></div>
-    <div class="txt"><h2>3D Motion<br>Design</h2><p>CGI Motion Design.</p><span class="go">View <i></i></span></div>
+    <div class="txt"><h2>3D Motion<br>Design</h2><p>CGI Motion Design.</p></div>
   </button>
   <button class="half b" data-open="b" aria-label="Open Gaming Assets">
     <div class="stage"><video src="videos/FAECHER_01_2.mp4" autoplay muted loop playsinline></video></div>
-    <div class="txt"><h2>Gaming<br>Assets</h2><p>Models, props and environments.</p><span class="go">View <i></i></span></div>
+    <div class="txt"><h2>Gaming<br>Assets</h2><p>Models, props and environments.</p></div>
   </button>
 </main>
 
@@ -173,6 +216,12 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   <div class="grid" id="grid-b"></div>
 </section>
 
+<section class="detail a" id="view-playground" hidden>
+  <h1>Playground</h1>
+  <p class="txtp">Placeholder: experiments, side projects and installations.</p>
+  <div class="pg-grid" id="pg-grid"></div>
+</section>
+
 <section class="detail a" id="view-about" hidden>
   <h1>About</h1>
   <p class="txtp">Placeholder: a few sentences about you, your work and what you are currently working on.</p>
@@ -181,7 +230,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 
 <script>
   const home = document.getElementById('home');
-  const views = { a: document.getElementById('view-a'), b: document.getElementById('view-b'), p: document.getElementById('view-p'), about: document.getElementById('view-about') };
+  const views = { a: document.getElementById('view-a'), b: document.getElementById('view-b'), p: document.getElementById('view-p'), about: document.getElementById('view-about'), playground: document.getElementById('view-playground') };
   const cube = '<div class="scene"><div class="cube"><span></span><span></span><span></span><span></span><span></span><span></span></div></div>';
   /* ===== HIER DEINE ASSETS EINTRAGEN (Gaming Assets) =====
      Pro Zeile: [Titel, Beschreibung, 'models/datei.glb', 'models/still.png', 'https://link-zum-kaufen' (optional)]
@@ -248,12 +297,23 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
     : mode === 'tile'
       ? `<video src="${f}#t=0.1" muted loop playsinline preload="metadata" onerror="this.remove()"></video>`
       : `<video src="${f}" autoplay muted loop playsinline controls onerror="this.remove()"></video>`;
+  /* ===== HIER DEINE PLAYGROUND-PROJEKTE EINTRAGEN =====
+     Pro Zeile: [Titel, Beschreibung, 'videos/datei.mp4' oder Bild (optional, '' = Platzhalter), 'Jahr · Art'] */
+  const playground = [
+    ['Venice Biennale 2024','Installation for the Venice Biennale 2024. Placeholder: add a short text, credits and media here.','','2024 · Installation'],
+    ['Project title','Placeholder: short description of the project.','','2025 · Experiment'],
+    ['Project title','Placeholder: short description of the project.','','2025 · Experiment']
+  ];
+  const pgGrid = document.getElementById('pg-grid');
+  pgGrid.innerHTML = playground.map(p => `<article class="pg"><div class="m"><div class="blob"></div>${mediaTag(p[2], 'tile')}</div><div><div class="meta">${p[3]}</div><b>${p[0]}</b><p>${p[1]}</p></div></article>`).join('');
+  pgGrid.addEventListener('mouseover', e => { const c = e.target.closest('.pg'), v = c && c.querySelector('video'); if (v && v.paused) v.play().catch(() => {}); });
+  pgGrid.addEventListener('mouseout', e => { const c = e.target.closest('.pg'); if (c && !c.contains(e.relatedTarget)) { const v = c.querySelector('video'); if (v) v.pause(); } });
   const tint = (i,l) => `hsl(0 0% ${l-(i%n)*2}%)`;
   const track = document.getElementById('track'), vA = views.a;
   track.innerHTML = Array.from({length:n*reps},(_,i) =>
     `<div class="item" data-i="${i}" role="button" tabindex="0"><div class="media" style="background:${tint(i,89)}"><div class="blob" style="animation-delay:-${(i%n)*1.3}s,0s"></div>${mediaTag(projects[i%n][2], 'tile')}</div><div class="cap"><i>${String(i%n+1).padStart(2,'0')}.</i><b>${projects[i%n][0]}</b><span>[3D ANIMATION]</span></div></div>`).join('');
   const items = [...track.children];
-  let pos = 2*n, target = 2*n, raf = 0, dims, dragX = null, moved = 0, snapT, activeP = -1, tween = null, playingIdx = -1;
+  let pos = 2*n, target = 2*n, raf = 0, dims, dragX = null, moved = 0, snapT, activeP = -1, playingIdx = -1;
 
   function measure(){
     const w = innerWidth, h = innerHeight;
@@ -276,37 +336,22 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
     const p = ((Math.round(pos) % n) + n) % n;
     activeP = p;
   }
-  /* Easy Ease (in + out): sanfter Start, sanftes Ankommen */
-  const ease = k => k < .5 ? 4*k*k*k : 1 - Math.pow(-2*k + 2, 3) / 2;
-  function snapTo(i){
-    const d = Math.abs(i - pos);
-    target = i;
-    if (d < .001){ pos = i; tween = null; return; }
-    tween = { from: pos, to: i, t0: performance.now(), dur: Math.min(1200, 600 + d*260) };
-  }
   /* Video startet nur, wenn die Kachel ruhig in der Mitte liegt */
   function videoOf(i){ return i >= 0 ? items[i].querySelector('video') : null; }
   function playback(){
-    const settled = !tween && Math.abs(target - pos) < .02;
+    const settled = Math.abs(target - pos) < .02;
     const want = settled ? Math.round(pos) : -1;
     if (want === playingIdx) return;
     const old = videoOf(playingIdx); if (old){ old.pause(); old.currentTime = .1; }
     playingIdx = want;
     const v = videoOf(want); if (v){ v.currentTime = 0; v.play().catch(() => {}); }
   }
-  function tick(now){
-    if (tween){
-      const k = Math.min(1, (now - tween.t0) / tween.dur);
-      pos = tween.from + (tween.to - tween.from) * ease(k);
-      if (k >= 1){ pos = tween.to; target = pos; tween = null; }
-    } else {
-      pos += (target-pos)*.2; if (Math.abs(target-pos) < .0005) pos = target;
-    }
-    if (pos < 2*n){ pos += n; target += n; if (tween){ tween.from += n; tween.to += n; } }
-    else if (pos >= 3*n){ pos -= n; target -= n; if (tween){ tween.from -= n; tween.to -= n; } }
+  function tick(){
+    pos += (target-pos)*.1; if (Math.abs(target-pos) < .0005) pos = target;
+    if (pos < 2*n){ pos += n; target += n; } else if (pos >= 3*n){ pos -= n; target -= n; }
     layout(); playback(); raf = requestAnimationFrame(tick);
   }
-  function startCarousel(){ measure(); cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); }
+  function startCarousel(){ measure(); cancelAnimationFrame(raf); tick(); }
   function stopCarousel(){
     cancelAnimationFrame(raf);
     const v = videoOf(playingIdx); if (v) v.pause();
@@ -317,23 +362,23 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   vA.addEventListener('wheel', e => {
     e.preventDefault();
     const d = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
-    tween = null; target += d/450;
-    clearTimeout(snapT); snapT = setTimeout(() => snapTo(Math.round(target)), 140);
+    target += d/450;
+    clearTimeout(snapT); snapT = setTimeout(() => target = Math.round(target), 140);
   }, { passive:false });
   vA.addEventListener('pointerdown', e => { dragX = e.clientX; moved = 0; });
   addEventListener('pointermove', e => {
     if (dragX === null) return;
     const dx = e.clientX - dragX; dragX = e.clientX; moved += Math.abs(dx);
-    tween = null; target -= dx/(dims.sw + dims.gap);
+    target -= dx/(dims.sw + dims.gap);
   });
-  ['pointerup','pointercancel'].forEach(t => addEventListener(t, () => { if (dragX !== null){ dragX = null; snapTo(Math.round(target)); } }));
+  ['pointerup','pointercancel'].forEach(t => addEventListener(t, () => { if (dragX !== null){ dragX = null; target = Math.round(target); } }));
   addEventListener('keydown', e => {
     if (vA.hidden) return;
-    if (e.key === 'ArrowRight') snapTo(Math.round(pos)+1);
-    if (e.key === 'ArrowLeft') snapTo(Math.round(pos)-1);
+    if (e.key === 'ArrowRight') target = Math.round(target)+1;
+    if (e.key === 'ArrowLeft') target = Math.round(target)-1;
   });
   items.forEach(el => {
-    const go = () => { const i = +el.dataset.i; if (Math.abs(i-pos) < .5) openProject(i % n); else snapTo(i); };
+    const go = () => { const i = +el.dataset.i; if (Math.abs(i-pos) < .5) openProject(i % n); else target = i; };
     el.addEventListener('click', () => { if (moved < 6) go(); });
     el.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
   });
