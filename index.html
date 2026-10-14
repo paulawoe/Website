@@ -116,15 +116,6 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .cap span{display:block;color:var(--light-mute)}
 .hint{position:absolute;bottom:calc(76px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);font-size:14px;color:var(--light-mute);white-space:nowrap}
 /* project page */
-.pj{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:clamp(24px,4vw,72px);align-items:start}
-.pj dl{margin:0 0 32px;display:grid;gap:14px}
-.pj h1{font-size:clamp(26px,2.8vw,44px);overflow-wrap:anywhere;line-height:1.05;margin-bottom:32px}
-.pj dt{font-size:14px;color:var(--light-mute)}
-.pj dd{margin:2px 0 0}
-.pm{aspect-ratio:16/9;background:#E8E8E8;display:grid;place-items:center;overflow:hidden;margin-bottom:clamp(12px,1.6vw,24px)}
-.pm .blob{width:22%;background:var(--light-ink)}
-.pm{position:relative}
-.pm video,.pm img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 
 /* playground */
 #view-playground h1{margin-bottom:24px}
@@ -141,16 +132,36 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 
 /* Schriften: Überschriften in Inter Tight (Grotesk), Fliesstext und Labels in DM Mono */
 :root{--display:"Inter Tight","Helvetica Neue",Helvetica,Arial,sans-serif}
-.half h2,.detail h1,.pj h1{font-family:var(--display);text-transform:uppercase;font-weight:500;letter-spacing:-.045em;line-height:.92}
+.half h2,.detail h1{font-family:var(--display);text-transform:uppercase;font-weight:500;letter-spacing:-.045em;line-height:.92}
 .half h2{font-size:clamp(40px,7vw,120px)}
 .detail h1{font-size:clamp(40px,7vw,112px)}
-.pj h1{font-size:clamp(32px,4vw,60px);line-height:.95}
 .cap b,.pg b,.info b{font-family:var(--display);text-transform:uppercase;font-weight:500;letter-spacing:-.01em}
 .cap b{font-size:16px}
 .pg b{font-size:18px}
 .info b{font-size:14px}
 /* Fliesstext in Grossbuchstaben wie in der Vorlage (diese Regel loeschen = normale Schreibweise) */
-.txtp,.pj dt,.pj dd,.pg p,.pg .meta,.cap span,.info span,.half p,.hint{text-transform:uppercase;letter-spacing:.01em}
+.txtp,.mi span,.mi b,.pg p,.pg .meta,.cap span,.info span,.half p,.hint{text-transform:uppercase;letter-spacing:.01em}
+
+/* Projektseite */
+.pp h1{font-size:clamp(36px,6vw,96px);margin:0 0 24px}
+.pmeta{display:flex;flex-wrap:wrap;gap:12px clamp(20px,3vw,48px);margin-bottom:28px;font-size:12px;line-height:1.35;text-transform:uppercase;letter-spacing:.02em}
+.mi span{display:block;color:var(--light-mute);margin-bottom:4px}
+.mi b{font-weight:400;color:var(--light-ink)}
+.strip{--g:10px;display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 3*var(--g))/4);gap:var(--g);overflow-x:auto;scrollbar-width:none;user-select:none;-webkit-user-select:none}
+.strip::-webkit-scrollbar{display:none}
+@media (hover:hover){.strip{cursor:none}}
+.st{position:relative;aspect-ratio:1080/1320;background:#E8E8E8;overflow:hidden;display:grid;place-items:center}
+.st video,.st img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.st .blob{width:30%;background:var(--light-ink)}
+.pbot{display:grid;grid-template-columns:1.4fr 1fr;gap:clamp(24px,4vw,72px);margin-top:28px;align-items:start}
+.pl i{display:block;font-style:normal;font-family:var(--display);font-size:clamp(28px,3vw,44px);color:#BDBDBD;letter-spacing:-.03em;line-height:1}
+.pl b{display:block;font-family:var(--display);text-transform:uppercase;font-weight:500;letter-spacing:-.03em;font-size:clamp(24px,2.6vw,40px);line-height:1;margin-top:10px}
+.pbot .txtp{margin:0;max-width:60ch;font-size:13px;line-height:1.5}
+.drag{position:fixed;z-index:30;left:0;top:0;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.55);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(0,0,0,.1);color:#000;font-size:11px;letter-spacing:.04em;text-transform:uppercase;pointer-events:none;opacity:0;transform:scale(.6);transition:opacity .25s,transform .25s}
+.drag.on{opacity:1;transform:scale(1)}
+.drag.down{transform:scale(.88)}
+@media (hover:none){.drag{display:none}}
+@media (max-width:900px){.strip{grid-auto-columns:42%}}
 
 @media (max-width:760px){
   :root{--hbar-h:84px}
@@ -159,7 +170,8 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   .half p{display:none}
   .bar{grid-template-columns:1fr auto;row-gap:8px;font-size:11px}
   .bar nav{grid-column:1/-1;justify-self:start;gap:14px;order:3}
-  .pj{grid-template-columns:1fr}
+  .pbot{grid-template-columns:1fr}
+  .strip{grid-auto-columns:78%}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
@@ -228,6 +240,8 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   <p class="txtp">hallo@example.com</p>
 </section>
 
+<div class="drag" id="drag">Drag</div>
+
 <script>
   const home = document.getElementById('home');
   const views = { a: document.getElementById('view-a'), b: document.getElementById('view-b'), p: document.getElementById('view-p'), about: document.getElementById('view-about'), playground: document.getElementById('view-playground') };
@@ -277,8 +291,12 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 
   /* ---------- Carousel A: endlos, aktives Projekt doppelt so groß, großes Bild im Hintergrund ---------- */
   /* ===== HIER DEINE PROJEKTE EINTRAGEN =====
-     Pro Zeile: [Titel, Beschreibung, 'videos/datei.mp4', 'videos/datei-full.mp4' (optional)]
-     Das 3. Feld ist das Video für das Karussell, das 4. (optional) die größere Version für die Projektseite.
+     Pro Zeile: [Titel, Beschreibung, 'videos/karussell.mp4', 'videos/erstes-bild.mp4', ['videos/bild2.png','videos/clip3.mp4'], ['Jahr','Tools','Rolle'], 'Langer Text']
+     3. Feld: Video/Bild fuer das Karussell (Pflicht)
+     4. Feld (optional): erstes Medium auf der Projektseite ('' = nimmt das 3. Feld)
+     5. Feld (optional): weitere Bilder/Videos fuer die Projektseite, in eckigen Klammern
+     6. Feld (optional): ['Year','Tools','Role'] in der Zeile unter dem Titel
+     7. Feld (optional): langer Text unten rechts
      Fehlt eine Datei, bleibt automatisch der Platzhalter sichtbar. */
   const projects = [
     ['Augmented Emotions','AR project','videos/Angst.png'],
@@ -296,7 +314,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
     ? `<img src="${f}" alt="" draggable="false" onerror="this.remove()">`
     : mode === 'tile'
       ? `<video src="${f}#t=0.1" muted loop playsinline preload="metadata" onerror="this.remove()"></video>`
-      : `<video src="${f}" autoplay muted loop playsinline controls onerror="this.remove()"></video>`;
+      : `<video src="${f}" autoplay muted loop playsinline onerror="this.remove()"></video>`;
   /* ===== HIER DEINE PLAYGROUND-PROJEKTE EINTRAGEN =====
      Pro Zeile: [Titel, Beschreibung, 'videos/datei.mp4' oder Bild (optional, '' = Platzhalter), 'Jahr · Art'] */
   const playground = [
@@ -384,11 +402,31 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   });
 
   function openProject(i){
-    const p = projects[i];
+    const p = projects[i], num = String(i+1).padStart(2,'0');
+    const meta = p[5] || ['2026','Blender, After Effects','Modeling, Animation, Rendering'];
+    const files = [p[3] || p[2], ...(p[4] || [])];
+    const tiles = files.map(f => `<div class="st"><div class="blob"></div>${mediaTag(f, 'strip')}</div>`);
+    if (!p[4]) while (tiles.length < 4) tiles.push('<div class="st"><div class="blob" style="animation-delay:-3s,0s"></div></div>');
+    const long = p[6] || 'Placeholder: more about the project goes here, such as the idea, process and making-of.';
     document.getElementById('pj').innerHTML =
-      `<div class="pj"><div><h1>${p[0]}</h1><dl><div><dt>Year</dt><dd>2026</dd></div><div><dt>Tools</dt><dd>Blender, After Effects</dd></div><div><dt>Role</dt><dd>Modeling, Animation, Rendering</dd></div></dl><p class="txtp">${p[1]}</p><p class="txtp">Placeholder: more about the project goes here, such as the idea, process and making-of.</p></div><div><div class="pm"><div class="blob"></div>${mediaTag(p[3]||p[2], 'full')}</div><div class="pm"><div class="blob" style="animation-delay:-4s,0s"></div></div></div></div>`;
+      `<div class="pp"><h1>${p[0]}</h1><div class="pmeta"><div class="mi"><span>Year</span><b>${meta[0]}</b></div><div class="mi"><span>Tools</span><b>${meta[1]}</b></div><div class="mi"><span>Role</span><b>${meta[2]}</b></div></div><div class="strip" id="strip">${tiles.join('')}</div><div class="pbot"><div class="pl"><i>${num}/</i><b>${p[1]}</b></div><p class="txtp">${long}</p></div></div>`;
     show('p');
   }
+
+  /* Projektseite: Leiste mit der Maus ziehen + "DRAG"-Cursor */
+  const dragEl = document.getElementById('drag');
+  let sDrag = null;
+  document.addEventListener('pointerdown', e => {
+    const s = e.target.closest && e.target.closest('#strip');
+    if (s && e.pointerType === 'mouse'){ sDrag = { s, x: e.clientX, l: s.scrollLeft }; dragEl.classList.add('down'); }
+  });
+  document.addEventListener('pointermove', e => {
+    const over = e.target.closest && e.target.closest('#strip');
+    if ((over || sDrag) && e.pointerType === 'mouse'){ dragEl.style.left = e.clientX + 'px'; dragEl.style.top = e.clientY + 'px'; dragEl.classList.add('on'); }
+    else dragEl.classList.remove('on');
+    if (sDrag) sDrag.s.scrollLeft = sDrag.l - (e.clientX - sDrag.x);
+  });
+  ['pointerup','pointercancel'].forEach(ev => document.addEventListener(ev, () => { sDrag = null; dragEl.classList.remove('down'); }));
 </script>
 </body>
 </html>
