@@ -204,11 +204,8 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
      - 5. Feld (optional): Link zu Fab, Gumroad usw. Ohne Link gibt es einen direkten .glb-Download. */
   const assets = [
     ['Cat statue','Kurzbeschreibung des Assets.','models/cat.glb',''],
-    ['Evil Eye','Kurzbeschreibung des Assets.','models/Evil_eye.glb','models/asset-02.png'],
-    ['Kukeri','Kurzbeschreibung des Assets.','models/Kukeri.glb',''],
-    ['Anthropomorphic God','Kurzbeschreibung des Assets.','models/anthropomorphic_god.glb',''],
-    ['Bronze Statue','Kurzbeschreibung des Assets.','models/bronze_statues.glb',''],
-  
+    ['Blabla','Kurzbeschreibung des Assets.','models/asset-02.glb','models/asset-02.png'],
+    ['XX','Nur Still, ohne 3D-Modell.','','models/asset-03.png']
   ];
   document.getElementById('grid-b').innerHTML = assets.map((a,i) =>
     `<div class="tile" data-i="${i}">${!a[2] && !a[3] ? cube : ''}${a[2] ? `<model-viewer src="${a[2]}" ${a[3] ? `poster="${a[3]}"` : ''} alt="${a[0]}" loading="lazy" reveal="auto" camera-controls disable-zoom auto-rotate-delay="0" touch-action="pan-y" shadow-intensity="1" environment-image="neutral" exposure="1.1" interaction-prompt="none"></model-viewer>` : (a[3] ? `<img src="${a[3]}" alt="${a[0]}" onerror="this.remove()">` : '')}<span class="t">${a[0]}</span><button class="more" data-more="${i}">Details</button></div>`).join('');
