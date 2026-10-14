@@ -78,6 +78,17 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .tile{position:relative;overflow:hidden;display:grid;place-items:center;border-radius:4px;aspect-ratio:1;background:#191B20}
 .tile .t{position:absolute;left:16px;bottom:14px;font-size:14px;color:var(--dark-mute)}
 .tile .scene{--z:min(5vmin,44px);width:min(10vmin,88px)}
+.tile{cursor:pointer}
+.tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.tile:hover .t{color:var(--dark-ink)}
+/* 3D-Viewer-Seite */
+.am{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(0,1fr);gap:clamp(24px,4vw,72px);align-items:start}
+.am .v{aspect-ratio:4/3;background:#191B20;border-radius:4px;overflow:hidden}
+.am .v model-viewer,.am .v img{display:block;width:100%;height:100%;object-fit:contain;background:transparent;--poster-color:transparent}
+.am h1{font-size:clamp(32px,4vw,56px);margin-bottom:24px}
+.am p{color:var(--dark-mute);max-width:40ch;line-height:1.5;margin:0}
+.btn{display:inline-block;margin-top:28px;padding:12px 20px;border:1px solid var(--dark-accent);color:var(--dark-accent);text-decoration:none;font-weight:500;border-radius:2px;transition:background .3s,color .3s}
+.btn:hover{background:var(--dark-accent);color:var(--dark)}
 
 /* carousel (A) */
 .detail.carousel{height:100%;min-height:0;padding:0;overflow:hidden;position:relative;touch-action:none;user-select:none;-webkit-user-select:none}
@@ -109,12 +120,13 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   .bar{grid-template-columns:1fr auto;row-gap:8px;font-size:11px}
   .bar nav{grid-column:1/-1;justify-self:start;gap:14px;order:3}
   .bar .r{display:none}
-  .pj{grid-template-columns:1fr}
+  .pj,.am{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
 }
 </style>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
 </head>
 <body>
 
@@ -154,7 +166,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 
 <section class="detail a carousel" id="view-a" hidden>
   <div class="cstage"><div id="track"></div></div>
-
+  <div class="hint">Scrollen oder wischen, Klick öffnet das Projekt</div>
 </section>
 
 <section class="detail a" id="view-p" hidden>
@@ -166,6 +178,10 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   <div class="grid" id="grid-b"></div>
 </section>
 
+<section class="detail b" id="view-m" hidden>
+  <div id="mv"></div>
+</section>
+
 <section class="detail a" id="view-about" hidden>
   <h1>About</h1>
   <p class="txtp">Platzhalter: Ein paar Sätze über dich, deine Arbeit und woran du gerade arbeitest.</p>
@@ -174,15 +190,38 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 
 <script>
   const home = document.getElementById('home');
-  const views = { a: document.getElementById('view-a'), b: document.getElementById('view-b'), p: document.getElementById('view-p'), about: document.getElementById('view-about') };
+  const views = { a: document.getElementById('view-a'), b: document.getElementById('view-b'), p: document.getElementById('view-p'), about: document.getElementById('view-about'), m: document.getElementById('view-m') };
   const cube = '<div class="scene"><div class="cube"><span></span><span></span><span></span><span></span><span></span><span></span></div></div>';
-  document.getElementById('grid-b').innerHTML = Array.from({length:6},()=>`<div class="tile">${cube}<span class="t">Asset-Name</span></div>`).join('');
+  /* ===== HIER DEINE ASSETS EINTRAGEN (Gaming Assets) =====
+     Pro Zeile: [Titel, Beschreibung, 'models/datei.glb', 'models/still.png', 'https://link-zum-kaufen' (optional)]
+     - 3. Feld: das 3D-Modell (.glb). Leer lassen ('') für ein Asset nur mit Still.
+     - 4. Feld: das Vorschaubild für die Kachel (png, jpg, webp).
+     - 5. Feld (optional): Link zu Fab, Gumroad usw. Ohne Link gibt es einen direkten .glb-Download. */
+  const assets = [
+    ['Asset Eins','Kurzbeschreibung des Assets.','models/asset-01.glb','models/asset-01.png'],
+    ['Asset Zwei','Kurzbeschreibung des Assets.','models/asset-02.glb','models/asset-02.png'],
+    ['Asset Drei','Nur Still, ohne 3D-Modell.','','models/asset-03.png']
+  ];
+  document.getElementById('grid-b').innerHTML = assets.map((a,i) =>
+    `<div class="tile" data-i="${i}" role="button" tabindex="0">${cube}${a[3] ? `<img src="${a[3]}" alt="" onerror="this.remove()">` : ''}<span class="t">${a[0]}</span></div>`).join('');
+  document.getElementById('grid-b').addEventListener('click', e => { const t = e.target.closest('.tile'); if (t) openAsset(+t.dataset.i); });
+  document.getElementById('grid-b').addEventListener('keydown', e => { const t = e.target.closest('.tile'); if (t && e.key === 'Enter') openAsset(+t.dataset.i); });
+  function openAsset(i){
+    const a = assets[i];
+    const view = a[2]
+      ? `<model-viewer src="${a[2]}" alt="${a[0]}" camera-controls auto-rotate auto-rotate-delay="1500" shadow-intensity="1" environment-image="neutral" exposure="1.1" interaction-prompt="none"></model-viewer>`
+      : `<img src="${a[3] || ''}" alt="${a[0]}">`;
+    const btn = a[4] ? `<a class="btn" href="${a[4]}" target="_blank" rel="noopener">Download / Kaufen</a>`
+      : (a[2] ? `<a class="btn" href="${a[2]}" download>Download (.glb)</a>` : '');
+    document.getElementById('mv').innerHTML = `<div class="am"><div class="v">${view}</div><div><h1>${a[0]}</h1><p>${a[1]}</p>${btn}</div></div>`;
+    show('m'); setFt(a[1]);
+  }
 
   function show(key){
     home.style.display = key ? 'none' : '';
     Object.entries(views).forEach(([k,el]) => el.hidden = k !== key);
-    document.body.style.background = (key && key !== 'b') ? 'var(--light)' : 'var(--dark)';
-    document.querySelectorAll('.bar nav a').forEach(a => a.classList.toggle('on', a.dataset.go === (key === 'p' ? 'a' : key)));
+    document.body.style.background = (key && key !== 'b' && key !== 'm') ? 'var(--light)' : 'var(--dark)';
+    document.querySelectorAll('.bar nav a').forEach(a => a.classList.toggle('on', a.dataset.go === ({p:'a', m:'b'}[key] || key)));
     window.scrollTo(0,0);
     cur = key; document.body.classList.toggle('is-home', !key);
     setFt((key === 'a' || key === 'p') ? projects[Math.max(activeP,0)] : null);
@@ -195,7 +234,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   const ftEl = document.getElementById('ft');
   const setFt = p => { ftEl.innerHTML = p ? p[1] : 'Portfolio 2026<br>3D Motion Design &amp; Gaming Assets'; };
   document.body.classList.add('is-home'); setFt(null);
-  document.querySelectorAll('.bk').forEach(a => a.addEventListener('click', e => { e.preventDefault(); show(cur === 'p' ? 'a' : null); }));
+  document.querySelectorAll('.bk').forEach(a => a.addEventListener('click', e => { e.preventDefault(); show(cur === 'p' ? 'a' : cur === 'm' ? 'b' : null); }));
 
   /* ---------- Carousel A: endlos, aktives Projekt doppelt so groß, großes Bild im Hintergrund ---------- */
   /* ===== HIER DEINE PROJEKTE EINTRAGEN =====
