@@ -78,7 +78,10 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .tile{position:relative;overflow:hidden;display:grid;place-items:center;border-radius:4px;aspect-ratio:1;background:#191B20}
 .tile .t{position:absolute;left:16px;bottom:14px;font-size:14px;color:var(--dark-mute)}
 .tile .scene{--z:min(5vmin,44px);width:min(10vmin,88px)}
-.tile{cursor:pointer}
+.tile{cursor:grab}
+.tile model-viewer{position:absolute;inset:0;width:100%;height:100%;background:#191B20;--poster-color:#191B20}
+.tile .more{position:absolute;right:14px;bottom:10px;font-size:13px;font-weight:500;color:var(--dark-accent);padding:4px 0;border-bottom:1px solid currentColor;cursor:pointer}
+.tile .t{pointer-events:none}
 .tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .tile:hover .t{color:var(--dark-ink)}
 /* 3D-Viewer-Seite */
@@ -198,14 +201,22 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
      - 4. Feld: das Vorschaubild für die Kachel (png, jpg, webp).
      - 5. Feld (optional): Link zu Fab, Gumroad usw. Ohne Link gibt es einen direkten .glb-Download. */
   const assets = [
-    ['Cat statue','Kurzbeschreibung des Assets.','models/cat.glb','models/cat.glb'],
+    ['Cat statue','Kurzbeschreibung des Assets.','models/cat.glb',''],
     ['Blabla','Kurzbeschreibung des Assets.','models/asset-02.glb','models/asset-02.png'],
     ['XX','Nur Still, ohne 3D-Modell.','','models/asset-03.png']
   ];
   document.getElementById('grid-b').innerHTML = assets.map((a,i) =>
-    `<div class="tile" data-i="${i}" role="button" tabindex="0">${cube}${a[3] ? `<img src="${a[3]}" alt="" onerror="this.remove()">` : ''}<span class="t">${a[0]}</span></div>`).join('');
-  document.getElementById('grid-b').addEventListener('click', e => { const t = e.target.closest('.tile'); if (t) openAsset(+t.dataset.i); });
-  document.getElementById('grid-b').addEventListener('keydown', e => { const t = e.target.closest('.tile'); if (t && e.key === 'Enter') openAsset(+t.dataset.i); });
+    `<div class="tile" data-i="${i}">${!a[2] && !a[3] ? cube : ''}${a[2] ? `<model-viewer src="${a[2]}" ${a[3] ? `poster="${a[3]}"` : ''} alt="${a[0]}" loading="lazy" reveal="auto" camera-controls disable-zoom auto-rotate-delay="0" touch-action="pan-y" shadow-intensity="1" environment-image="neutral" exposure="1.1" interaction-prompt="none"></model-viewer>` : (a[3] ? `<img src="${a[3]}" alt="${a[0]}" onerror="this.remove()">` : '')}<span class="t">${a[0]}</span><button class="more" data-more="${i}">Details</button></div>`).join('');
+  const gb = document.getElementById('grid-b');
+  gb.addEventListener('click', e => {
+    const b = e.target.closest('[data-more]'), t = e.target.closest('.tile');
+    if (b) openAsset(+b.dataset.more);
+    else if (t && !t.querySelector('model-viewer')) openAsset(+t.dataset.i);
+  });
+  /* Modell dreht sich nur beim Hover (schont den Rechner) */
+  gb.addEventListener('mouseover', e => { const t = e.target.closest('.tile'), mv = t && t.querySelector('model-viewer'); if (mv) mv.autoRotate = true; });
+  gb.addEventListener('mouseout', e => { const t = e.target.closest('.tile'); if (t && !t.contains(e.relatedTarget)) { const mv = t.querySelector('model-viewer'); if (mv) mv.autoRotate = false; } });
+  
   function openAsset(i){
     const a = assets[i];
     const view = a[2]
