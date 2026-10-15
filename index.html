@@ -153,6 +153,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .st{position:relative;aspect-ratio:1080/1320;background:#E8E8E8;overflow:hidden;display:grid;place-items:center}
 .st video,.st img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
 .st .blob{width:30%;background:var(--light-ink)}
+.st model-viewer{position:absolute;inset:0;width:100%;height:100%;background:#E8E8E8;--poster-color:#E8E8E8;cursor:grab}
 .pbot{display:grid;grid-template-columns:1.4fr 1fr;gap:clamp(24px,4vw,72px);margin-top:28px;align-items:start}
 .pl i{display:block;font-style:normal;font-family:var(--display);font-size:clamp(28px,3vw,44px);color:#BDBDBD;letter-spacing:-.03em;line-height:1}
 .pl b{display:block;font-family:var(--display);text-transform:uppercase;font-weight:500;letter-spacing:-.03em;font-size:clamp(24px,2.6vw,40px);line-height:1;margin-top:10px}
@@ -256,14 +257,14 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
     ['Evil Eye','Short description of the asset.','models/Evil_eye.glb',''],
     ['Kukeri','Short description of the asset.','models/Kukeri.glb',''],
     ['Anthropomorphic God','Short description of the asset.','models/anthropomorphic_god.glb',''],
-    ['Bronze Statue','Short description of the asset.','models/bronze_statues.glb','']
-    ['Cabinet01','Short description of the asset.','models/cabinet.glb','']
-    ['Cabinet02','Short description of the asset.','models/cabinet02.glb','']
-    ['Choreography Award','Short description of the asset.','models/choerography_award.glb','']
-    ['Fortune Telling Machine','Short description of the asset.','models/fortune.glb','']
-    ['Hand','Short description of the asset.','models/hand.glb','']
-    ['Shab','Short description of the asset.','models/shab.glb','']
-    ['Spirit Home','Short description of the asset.','models/spirit_home.glb','']
+    ['Bronze Statue','Short description of the asset.','models/bronze_statues.glb',''],
+    ['Cabinet01','Short description of the asset.','models/cabinet.glb',''],
+    ['Cabinet02','Short description of the asset.','models/cabinet02.glb',''],
+    ['Choreography Award','Short description of the asset.','models/choerography_award.glb',''],
+    ['Fortune Telling Machine','Short description of the asset.','models/fortune.glb',''],
+    ['Hand','Short description of the asset.','models/hand.glb',''],
+    ['Shab','Short description of the asset.','models/shab.glb',''],
+    ['Spirit Home','Short description of the asset.','models/spirit_home.glb',''],
     ['Wood Man','Short description of the asset.','models/wood_man.glb','']
   ];
   document.getElementById('grid-b').innerHTML = assets.map((a,i) => {
@@ -302,7 +303,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
      Pro Zeile: [Titel, Beschreibung, 'videos/karussell.mp4', 'videos/erstes-bild.mp4', ['videos/bild2.png','videos/clip3.mp4'], ['Jahr','Tools','Rolle'], 'Langer Text']
      3. Feld: Video/Bild fuer das Karussell (Pflicht)
      4. Feld (optional): erstes Medium auf der Projektseite ('' = nimmt das 3. Feld)
-     5. Feld (optional): weitere Bilder/Videos fuer die Projektseite, in eckigen Klammern
+     5. Feld (optional): weitere Bilder, Videos oder 3D-Modelle (.glb) fuer die Projektseite, in eckigen Klammern
      6. Feld (optional): ['Year','Tools','Role'] in der Zeile unter dem Titel
      7. Feld (optional): langer Text unten rechts
      Fehlt eine Datei, bleibt automatisch der Platzhalter sichtbar. */
@@ -318,7 +319,10 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   const n = projects.length, reps = 5;
   /* Bilder (png, jpg, webp, gif) und Videos (mp4) werden automatisch erkannt */
   const isImg = f => /\.(png|jpe?g|webp|gif|avif)$/i.test(f || '');
-  const mediaTag = (f, mode) => !f ? '' : isImg(f)
+  const isGlb = f => /\.glb$/i.test(f || '');
+  const mediaTag = (f, mode) => !f ? '' : isGlb(f)
+    ? `<model-viewer src="${f}" alt="" loading="lazy" reveal="auto" camera-controls disable-zoom auto-rotate touch-action="pan-y" shadow-intensity="1" environment-image="neutral" exposure="1.1" interaction-prompt="none"></model-viewer>`
+    : isImg(f)
     ? `<img src="${f}" alt="" draggable="false" onerror="this.remove()">`
     : mode === 'tile'
       ? `<video src="${f}#t=0.1" muted loop playsinline preload="metadata" onerror="this.remove()"></video>`
@@ -426,10 +430,10 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   let sDrag = null;
   document.addEventListener('pointerdown', e => {
     const s = e.target.closest && e.target.closest('#strip');
-    if (s && e.pointerType === 'mouse'){ sDrag = { s, x: e.clientX, l: s.scrollLeft }; dragEl.classList.add('down'); }
+    if (s && e.pointerType === 'mouse' && !e.target.closest('model-viewer')){ sDrag = { s, x: e.clientX, l: s.scrollLeft }; dragEl.classList.add('down'); }
   });
   document.addEventListener('pointermove', e => {
-    const over = e.target.closest && e.target.closest('#strip');
+    const over = e.target.closest && e.target.closest('#strip') && !e.target.closest('model-viewer');
     if ((over || sDrag) && e.pointerType === 'mouse'){ dragEl.style.left = e.clientX + 'px'; dragEl.style.top = e.clientY + 'px'; dragEl.classList.add('on'); }
     else dragEl.classList.remove('on');
     if (sDrag) sDrag.s.scrollLeft = sDrag.l - (e.clientX - sDrag.x);
