@@ -186,6 +186,10 @@ body::before{content:"";position:fixed;z-index:10;inset:0 0 auto;height:env(safe
   .bar{grid-template-columns:1fr auto;row-gap:8px;font-size:11px}
   .bar nav{grid-column:1/-1;justify-self:start;gap:14px;order:3}
 }
+/* Größere, unsichtbare Klickfläche für Links in Kopf- und Fußzeile (ändert das Layout nicht) */
+.bar a{position:relative}
+.bar a::after{content:"";position:absolute;inset:-20px -12px}
+@media (max-width:760px){.bar a::after{inset:-6px -8px}}
 /* ---------- Low Poly: alles invertiert (schwarz). Wird per JS über body.dark geschaltet ---------- */
 body.dark::before{background:var(--dark)}
 body.dark .bar{background:var(--dark);color:var(--dark-ink)}
@@ -371,7 +375,7 @@ body.dark .pl i{color:#5A5A5A}
       title:'Low Poly', cols:2, ratio:'16/9', tag:'Game Asset', tools:'Blender', role:'Modeling, Texturing',
       projects: [
         { title:'Light to the nations', desc:'Installation by Yael Bartana, Biennale Arte Venice 2024', cover:'Gaming projects/Venedig02.jpg',
-          media:['Gaming projects/Venedig02.jpg','Gaming projects/Venedig03.jpg','Gaming projects/Venedig04.jpg','Gaming projects/Venedig05.jpg','Gaming projects/Venedig06.jpg','Gaming projects/Venedig07.jpg'],
+          media:['Gaming projects/Venedig03.jpg','Gaming projects/Venedig04.jpg','Gaming projects/Venedig05.jpg','Gaming projects/Venedig06.jpg','Gaming projects/Venedig07.jpg'],
           text:'The installation “Generationship: Light to the Nations” by Yael Bartana, presented at the 2024 Biennale Arte in Venice, explores themes of identity and community through a striking interplay of light and spatial design. This work invites visitors to reflect on the interconnections between generations and cultures.' },
         { title:'The Memphis Chronicles', desc:'Placeholder: short description of the project.', cover:'Gaming projects/Memphis01.jpg',
           media:['Gaming projects/Memphis02.jpg','Gaming projects/Memphis03.jpg','Gaming projects/Memphis04.jpg','Gaming projects/Memphis05.jpg','Gaming projects/Memphis06.jpg'] },
