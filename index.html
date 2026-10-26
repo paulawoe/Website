@@ -434,14 +434,14 @@ body.dark .pl i{color:#5A5A5A}
     const cols = effectiveCols(), gap = innerWidth < 700 ? 12 : 20;
     const rowGap = innerWidth < 700 ? 44 : 80;      /* Abstand unter dem Titel bis zur nächsten Kachel */
     const cw = (w - gap*(cols-1)) / cols;
-    const hs = new Array(cols).fill(0);
-    cells.forEach(el => {
-      el.style.width = cw + 'px';
-      const c = hs.indexOf(Math.min(...hs));
-      el.style.transform = `translate(${c*(cw+gap)}px,${hs[c]}px)`;
-      hs[c] += el.offsetHeight + rowGap;
-    });
-    gridEl.style.height = Math.max(...hs) + 'px';
+    /* Feste Zeilen: alle Kacheln einer Zeile schließen oben bündig ab, die nächste Zeile beginnt unter der höchsten */
+    let y = 0;
+    for (let r = 0; r < cells.length; r += cols){
+      const row = cells.slice(r, r + cols);
+      row.forEach((el, c) => { el.style.width = cw + 'px'; el.style.transform = `translate(${c*(cw+gap)}px,${y}px)`; });
+      y += Math.max(...row.map(el => el.offsetHeight)) + rowGap;
+    }
+    gridEl.style.height = y + 'px';
   }
   let layoutRaf = 0;
   function queueLayout(){ cancelAnimationFrame(layoutRaf); layoutRaf = requestAnimationFrame(layoutGrid); }
