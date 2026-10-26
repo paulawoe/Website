@@ -351,15 +351,16 @@ body.dark .pl i{color:#5A5A5A}
           year:'2026', tools:'Blender', role:'3D Animation together with Sucuk und Bratwurst, Art Direction: Sucuk und Bratwurst', text:'Dein langer Text über das Projekt.' },
         { title:'Diesel Fragrance', desc:'Artwork for Diesel Fragrance', cover:'videos/Diesel_2.mp4', tag:'Artwork' },
         { title:'Diesel X Ultrahuman', desc:'Animation Diesel X Ultrahuman', cover:'videos/Diesel_UH.mp4' },
-        { title:'Amore AG', desc:'Artwork for Amore AG', cover:'videos/Amore_2.mp4', tag:'Artwork', 
-         media:['videos/Amore_2.mp4','3D/Amore01.png','3D/Amore02.png','3D/Amore03.png'],
+        { title:'Amore AG', desc:'Artwork for Amore AG', cover:'videos/Amore_2.mp4', tag:'Artwork',
+          media:['3D/Amore01.png','3D/Amore02.png','3D/Amore03.png'],
           year:'2026', tools:'Blender', role:'3D Animation', text:'Dein langer Text über das Projekt.' },
         { title:'Louboutin', desc:'3D Animation for Louboutin Socials', cover:'videos/Louibuton.mp4', tag:'3D Modelling' },
         { title:'SamsoeSamoe', desc:'3D Product Modeling', cover:'videos/samsoe.png', tag:'3D Modelling' },
         { title:'suitcase product modeling', desc:'3D Product Shots and Modeling', cover:'videos/suitcase.png', tag:'3D Modelling' },
         { title:'Hold me tight', desc:'private project', cover:'videos/purple.mp4' },
         { title:'HÖR Berlin', desc:'March Artwork for HÖR Berlin', cover:'videos/Hoer.png', tag:'Artwork' },
-        { title:'Crocs', desc:'Artwork for Crocs', cover:'videos/crocs_2.mp4', tag:'Artwork'  media:['videos/crocs_2.mp4','3D/Crocs01.png','3D/Crocs02.png','3D/Crocs03.png'],
+        { title:'Crocs', desc:'Artwork for Crocs', cover:'videos/crocs_2.mp4', tag:'Artwork',
+          media:['3D/Crocs01.png','3D/Crocs02.png','3D/Crocs03.png'],
           year:'2025', tools:'Blender', role:'Art Direction, 3D Modeling', text:'Dein langer Text über das Projekt.' },
         { title:'Augmented Emotions', desc:'AR project', cover:'videos/Angst.png', tag:'AR' },
         { title:'Coral Reevival', desc:'Tilt5 project', cover:'videos/Corall.mov', tag:'AR' },
@@ -394,13 +395,22 @@ body.dark .pl i{color:#5A5A5A}
      Sobald eine Datei geladen ist, meldet fit() ihr echtes Seitenverhältnis zurück. */
   const isImg = f => /\.(png|jpe?g|webp|gif|avif)$/i.test(f || '');
   const isGlb = f => /\.glb$/i.test(f || '');
+  const enc = f => encodeURI(f);      /* Leerzeichen & Co. im Pfad sicher machen */
+  function bad(el){                    /* Datei nicht gefunden: Pfad anzeigen statt stillschweigend zu verschwinden */
+    const src = decodeURI((el.getAttribute('src') || '').split('#')[0]);
+    console.warn('Datei nicht gefunden:', src);
+    const note = document.createElement('div');
+    note.textContent = 'Datei nicht gefunden: ' + src;
+    note.style.cssText = 'position:absolute;inset:0;display:grid;place-items:center;padding:12px;text-align:center;font-size:11px;line-height:1.4;word-break:break-all;color:#d00;background:inherit;text-transform:none';
+    el.replaceWith(note);
+  }
   const mediaTag = (f, mode) => !f ? '' : isGlb(f)
-    ? `<model-viewer src="${f}" alt="" loading="lazy" reveal="auto" ${mode === 'tile' ? '' : 'camera-controls disable-zoom auto-rotate'} touch-action="pan-y" shadow-intensity="1" environment-image="neutral" exposure="1.1" interaction-prompt="none"></model-viewer>`
+    ? `<model-viewer src="${enc(f)}" alt="" loading="lazy" reveal="auto" ${mode === 'tile' ? '' : 'camera-controls disable-zoom auto-rotate'} touch-action="pan-y" shadow-intensity="1" environment-image="neutral" exposure="1.1" interaction-prompt="none"></model-viewer>`
     : isImg(f)
-    ? `<img src="${f}" alt="" draggable="false" onload="fit(this)" onerror="this.remove()">`
+    ? `<img src="${enc(f)}" alt="" draggable="false" onload="fit(this)" onerror="bad(this)">`
     : (mode === 'tile' || mode === 'strip')
-      ? `<video src="${f}#t=0.1" muted loop playsinline preload="metadata" onloadedmetadata="fit(this)" onerror="this.remove()"></video>`
-      : `<video src="${f}" autoplay muted loop playsinline onloadedmetadata="fit(this)" onerror="this.remove()"></video>`;
+      ? `<video src="${enc(f)}#t=0.1" muted loop playsinline preload="metadata" onloadedmetadata="fit(this)" onerror="bad(this)"></video>`
+      : `<video src="${enc(f)}" autoplay muted loop playsinline onloadedmetadata="fit(this)" onerror="bad(this)"></video>`;
 
   function fit(el){
     const w = el.videoWidth || el.naturalWidth, h = el.videoHeight || el.naturalHeight;
