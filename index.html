@@ -186,6 +186,21 @@ body::before{content:"";position:fixed;z-index:10;inset:0 0 auto;height:env(safe
   .bar{grid-template-columns:1fr auto;row-gap:8px;font-size:11px}
   .bar nav{grid-column:1/-1;justify-self:start;gap:14px;order:3}
 }
+/* ---------- Low Poly: alles invertiert (schwarz). Wird per JS über body.dark geschaltet ---------- */
+body.dark::before{background:var(--dark)}
+body.dark .bar{background:var(--dark);color:var(--dark-ink)}
+body.dark .bar:not(.foot){border-bottom:1px solid var(--line)}
+body.dark .bar.foot{border-top:1px solid var(--line)}
+body.dark .detail.a{background:var(--dark);color:var(--dark-ink)}
+body.dark .modes button{color:#5A5A5A}
+body.dark .modes button:hover,body.dark .modes button.on{color:var(--dark-ink)}
+body.dark .gm,body.dark .st,body.dark .peek{background:var(--tile)}
+body.dark .gm model-viewer,body.dark .st model-viewer,body.dark .peek model-viewer{background:var(--tile);--poster-color:var(--tile)}
+body.dark .gm .blob,body.dark .st .blob{background:#D4D4D4}
+body.dark #list{border-top-color:var(--dark-ink)}
+body.dark .row{color:var(--dark-ink);border-bottom-color:var(--line)}
+body.dark .mi b{color:var(--dark-ink)}
+body.dark .pl i{color:#5A5A5A}
 @media (max-width:900px){
   .pp{grid-template-columns:1fr}
   .pside{position:static;max-height:none;overflow:visible;padding-bottom:0;margin-bottom:40px}
@@ -574,7 +589,11 @@ body::before{content:"";position:fixed;z-index:10;inset:0 0 auto;height:env(safe
     cur = key;
     home.style.display = key ? 'none' : '';
     Object.entries(views).forEach(([k,el]) => el.hidden = k !== key);
-    document.body.style.background = (key && key !== 'assets') ? 'var(--light)' : 'var(--dark)';
+    /* Low Poly (Übersicht, Projektseiten, Assets-Seite) ist invertiert: schwarzer Hintergrund, weiße Schrift */
+    const dark = key === 'assets' || ((key === 'ov' || key === 'p') && col === 'low');
+    document.body.classList.toggle('dark', dark);
+    document.getElementById('cols-wrap').classList.toggle('lt', !dark);
+    document.body.style.background = (key && !dark) ? 'var(--light)' : 'var(--dark)';
     const navKey = key === 'assets' ? 'low' : (key === 'ov' || key === 'p') ? col : key;
     document.querySelectorAll('.bar nav a').forEach(a => a.classList.toggle('on', !!navKey && a.dataset.go === navKey));
     document.body.classList.toggle('is-home', !key);
