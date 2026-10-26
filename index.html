@@ -28,8 +28,9 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 :focus-visible{outline:2px solid currentColor;outline-offset:-4px}
 
 /* header */
-.bar{position:fixed;z-index:10;top:env(safe-area-inset-top,0px);left:0;right:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:start;gap:16px;padding:22px clamp(16px,2.2vw,32px);color:#fff;mix-blend-mode:difference;pointer-events:none;font-family:"DM Mono",ui-monospace,Menlo,monospace;font-size:12px;line-height:1.35;font-weight:500;text-transform:uppercase;letter-spacing:.02em}
+.bar{position:fixed;z-index:10;top:env(safe-area-inset-top,0px);left:0;right:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;align-content:center;gap:16px;height:var(--hbar-h);padding:0 clamp(16px,2.2vw,32px);background:var(--light);color:#000;pointer-events:auto;font-family:"DM Mono",ui-monospace,Menlo,monospace;font-size:12px;line-height:1.35;font-weight:500;text-transform:uppercase;letter-spacing:.02em}
 .bar nav{display:flex;gap:clamp(14px,2vw,32px);justify-self:end}
+body::before{content:"";position:fixed;z-index:10;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--light)}
 .bar a{pointer-events:auto;color:inherit;text-decoration:none}
 .bar nav a.on{text-decoration:underline;text-underline-offset:4px}
 .is-home .bk{visibility:hidden}
@@ -84,13 +85,13 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .tile .scene{--z:min(5vmin,44px);width:min(10vmin,88px)}
 .tile model-viewer{position:absolute;inset:0;width:100%;height:100%;background:var(--tile);--poster-color:var(--tile)}
 .tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-#view-b h1{margin-bottom:28px}
+#view-assets h1{margin-bottom:28px}
 .cols{display:flex;align-items:center;gap:10px;width:max-content;font-size:12px;text-transform:uppercase;letter-spacing:.02em;color:var(--dark-mute)}
-#view-b .cols{margin-bottom:40px}
+#view-assets .cols{margin-bottom:40px}
 .cols select{appearance:none;-webkit-appearance:none;font:inherit;text-transform:uppercase;letter-spacing:inherit;color:var(--dark-ink);background:var(--tile) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23FFFFFF' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 10px center;border:1px solid var(--line);border-radius:2px;padding:8px 30px 8px 12px;cursor:pointer}
 .cols select:hover,.cols select:focus-visible{border-color:var(--dark-accent)}
 .cols select option{background:var(--tile);color:var(--dark-ink)}
-@media (max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}#view-b .cols{display:none}}
+@media (max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}#view-assets .cols{display:none}}
 .cell{position:relative}
 .cell:hover{z-index:5}
 .info{position:absolute;top:100%;left:0;right:0;z-index:5;display:flex;flex-direction:column;gap:4px;padding:12px 14px;background:var(--dark);border:1px solid var(--line);border-radius:2px;font-size:12px;line-height:1.45;color:var(--dark-mute);opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .3s,transform .3s}
@@ -122,7 +123,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .gm{position:relative;overflow:hidden;background:#E8E8E8;display:grid;place-items:center;aspect-ratio:1080/1320}
 .gm .blob{width:30%;background:var(--light-ink)}
 .gm video,.gm img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
-.gm model-viewer{position:absolute;inset:0;width:100%;height:100%;background:#E8E8E8;--poster-color:#E8E8E8}
+.gm model-viewer{position:absolute;inset:0;width:100%;height:100%;background:#E8E8E8;--poster-color:#E8E8E8;pointer-events:none}
 .gcap{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:baseline;padding:10px 0 0;font-size:12px;line-height:1.3;text-transform:uppercase;letter-spacing:.02em}
 .gcap .n,.gcap .t{color:var(--light-mute)}
 .gcap b{font-family:var(--display);font-weight:500;font-size:15px;letter-spacing:-.01em;text-decoration:underline;text-decoration-color:transparent;text-underline-offset:4px;transition:text-decoration-color .2s}
@@ -139,6 +140,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .peek{position:fixed;left:0;top:0;z-index:20;width:min(26vw,320px);background:#E8E8E8;overflow:hidden;pointer-events:none;opacity:0;transition:opacity .2s}
 .peek.on{opacity:1}
 .peek video,.peek img{display:block;width:100%;height:100%;object-fit:cover}
+.peek model-viewer{display:block;width:100%;height:100%;background:#E8E8E8;--poster-color:#E8E8E8}
 @media (hover:none){.peek{display:none}}
 
 /* ---------- Playground ---------- */
@@ -200,8 +202,8 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   <a href="#" data-go="">Paula Wörndl</a>
   <a href="#" class="bk">(Back)</a>
   <nav>
-    <a href="#a" data-go="a">3D Motion Design</a>
-    <a href="#b" data-go="b">Gaming Assets</a>
+    <a href="#high" data-go="high">High Poly</a>
+    <a href="#low" data-go="low">Low Poly</a>
     <a href="#playground" data-go="playground">Playground</a>
     <a href="#about" data-go="about">About</a>
   </nav>
@@ -218,18 +220,18 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 </footer>
 
 <main id="home">
-  <button class="half a" data-open="a" aria-label="Open 3D Motion Design">
+  <button class="half a" data-open="high" aria-label="Open High Poly">
     <div class="stage"><video src="videos/Amore_2.mp4" autoplay muted loop playsinline></video></div>
-    <div class="txt"><h2>3D Motion<br>Design</h2><p>CGI Motion Design.</p></div>
+    <div class="txt"><h2>High<br>Poly</h2><p>CGI Motion Design.</p></div>
   </button>
-  <button class="half b" data-open="b" aria-label="Open Gaming Assets">
+  <button class="half b" data-open="low" aria-label="Open Low Poly">
     <div class="stage"><video src="videos/FAECHER_01_2.mp4" autoplay muted loop playsinline></video></div>
-    <div class="txt"><h2>Gaming<br>Assets</h2><p>Models, props and environments.</p></div>
+    <div class="txt"><h2>Low<br>Poly</h2><p>Models, props and environments.</p></div>
   </button>
 </main>
 
-<section class="detail a" id="view-a" hidden>
-  <h1>3D Motion Design</h1>
+<section class="detail a" id="view-ov" hidden>
+  <h1 id="ov-title">High Poly</h1>
   <div class="tools">
     <div class="sw">Selected Works<sup id="cnt"></sup></div>
     <div class="rt">
@@ -248,7 +250,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   <div id="pj"></div>
 </section>
 
-<section class="detail b" id="view-b" hidden>
+<section class="detail b" id="view-assets" hidden>
   <h1>Gaming Assets</h1>
   <label class="cols">Columns <select id="cols-select" aria-label="Number of columns"><option value="3">3</option><option value="4" selected>4</option><option value="5">5</option></select></label>
   <div class="grid" id="grid-b"></div>
@@ -270,7 +272,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 
 <script>
   const home = document.getElementById('home');
-  const views = { a: document.getElementById('view-a'), b: document.getElementById('view-b'), p: document.getElementById('view-p'), about: document.getElementById('view-about'), playground: document.getElementById('view-playground') };
+  const views = { ov: document.getElementById('view-ov'), assets: document.getElementById('view-assets'), p: document.getElementById('view-p'), about: document.getElementById('view-about'), playground: document.getElementById('view-playground') };
   const cube = '<div class="scene"><div class="cube"><span></span><span></span><span></span><span></span><span></span><span></span></div></div>';
 
   /* ===== GAMING ASSETS =====
@@ -304,43 +306,68 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   gb.addEventListener('mouseover', e => { const c = e.target.closest('.cell'), mv = c && c.querySelector('model-viewer'); if (mv) mv.autoRotate = true; });
   gb.addEventListener('mouseout', e => { const c = e.target.closest('.cell'); if (c && !c.contains(e.relatedTarget)) { const mv = c.querySelector('model-viewer'); if (mv) mv.autoRotate = false; } });
 
-  /* ===== PROJEKTE (3D Motion Design) =====
-     Pflicht:   title, desc, cover   (cover = Video, Bild oder .glb für die Kachel)
-     Optional:  tag     Bezeichnung unter der Kachel (Standard: '3D Animation')
+  /* ===== PROJEKTE =====
+     Zwei Bereiche mit je eigener Projektliste: 'high' (High Poly) und 'low' (Low Poly).
+     Pflicht:   title, desc, cover   (cover = Video, Bild oder .glb für die Kachel; '' = Platzhalter)
+     Optional:  tag     Bezeichnung unter der Kachel (Standard je Bereich)
                 ratio   Seitenverhältnis fest vorgeben, z. B. '1080/1320', '16/9', '1/1'.
                         Ohne Angabe wird es automatisch aus der Datei gelesen.
-                year, tools, role   Zeile unter dem Titel auf der Projektseite
+                year, tools, role   Angaben links auf der Projektseite
                 first   erstes Medium der Projektseite ('' = nimmt cover)
                 media   weitere Bilder, Videos oder .glb für die Projektseite
-                text    langer Text unten rechts */
-  const projects = [
-    { title:'Augmented Emotions', desc:'AR project', cover:'videos/Angst.png', tag:'AR' },
-    { title:'Hold me tight', desc:'private project', cover:'videos/purple.mp4' },
-    { title:'HÖR Berlin', desc:'March Artwork for HÖR Berlin', cover:'videos/Hoer.png', tag:'Artwork' },
-    { title:'300.000 Volt', desc:'Von nun an jagt die Beute', cover:'videos/LABUBU_2.mp4',
-      media:['videos/FAECHER_01_2.mp4','videos/PEZ_2.mp4','videos/WURFSTERN_2.mp4','videos/TAMAGOTCHIE.mp4'],
-      year:'2025', tools:'Blender', role:'Art direction, 3D', text:'Dein langer Text über das Projekt.' },
-    { title:'Sucux Coffee', desc:'Sucux Coffee Animations', cover:'videos/Sucux_Archive_sale_2.mp4',
-      media:['videos/Sucux_Canister_2.mp4','videos/Sucux_FAT.mp4','videos/Sucux_Formula1_2.mp4','videos/Sucux_NYE.MP4'],
-      year:'2025', tools:'Blender', role:'Art direction, 3D', text:'Dein langer Text über das Projekt.' },
-    { title:'Diesel X Ultrahuman', desc:'Animation Diesel X Ultrahuman', cover:'videos/Diesel_UH.mp4' },
-    { title:'Amore AG', desc:'Artwork for Amore AG', cover:'videos/Amore_2.mp4', tag:'Artwork' },
-    { title:'Louboutin', desc:'Artwork for Louboutin Socials', cover:'videos/Louibuton.mp4', tag:'Artwork' },
-    { title:'Crocs', desc:'Artwork for Crocs', cover:'videos/crocs_2.mp4', tag:'Artwork' },
-    { title:'Diesel Fragrance', desc:'Artwork for Diesel Fragrance', cover:'videos/Diesel_2.mp4', tag:'Artwork' }
-  ];
-  const n = projects.length;
+                text    langer Text links auf der Projektseite
+                (je Bereich: cols = Standard-Spaltenzahl der Übersicht, ratio = Standardformat der Kacheln)
+                go      Klick führt direkt auf eine andere Seite statt auf eine Projektseite
+                        ('assets' = die Seite mit den 3D-Ansichten und Downloads) */
   const DEFAULT_R = 1080/1320;
   const parseR = s => { const [a,b] = String(s).split('/').map(Number); return a/(b||1) || DEFAULT_R; };
-  const ratios = projects.map(p => p.ratio ? parseR(p.ratio) : DEFAULT_R);
-  document.getElementById('cnt').textContent = '(' + n + ')';
+  const collections = {
+    high: {
+      title:'High Poly', cols:3, tag:'3D Animation', tools:'Blender, After Effects', role:'Modeling, Animation, Rendering',
+      projects: [
+        { title:'Augmented Emotions', desc:'AR project', cover:'videos/Angst.png', tag:'AR' },
+        { title:'Hold me tight', desc:'private project', cover:'videos/purple.mp4' },
+        { title:'HÖR Berlin', desc:'March Artwork for HÖR Berlin', cover:'videos/Hoer.png', tag:'Artwork' },
+        { title:'300.000 Volt', desc:'Von nun an jagt die Beute', cover:'videos/LABUBU_2.mp4',
+          media:['videos/FAECHER_01_2.mp4','videos/PEZ_2.mp4','videos/WURFSTERN_2.mp4','videos/TAMAGOTCHIE.mp4'],
+          year:'2025', tools:'Blender', role:'Art direction, 3D', text:'Dein langer Text über das Projekt.' },
+        { title:'Sucux Coffee', desc:'Sucux Coffee Animations', cover:'videos/Sucux_Archive_sale_2.mp4',
+          media:['videos/Sucux_Canister_2.mp4','videos/Sucux_FAT.mp4','videos/Sucux_Formula1_2.mp4','videos/Sucux_NYE.MP4'],
+          year:'2025', tools:'Blender', role:'Art direction, 3D', text:'Dein langer Text über das Projekt.' },
+        { title:'Diesel X Ultrahuman', desc:'Animation Diesel X Ultrahuman', cover:'videos/Diesel_UH.mp4' },
+        { title:'Amore AG', desc:'Artwork for Amore AG', cover:'videos/Amore_2.mp4', tag:'Artwork' },
+        { title:'Louboutin', desc:'Artwork for Louboutin Socials', cover:'videos/Louibuton.mp4', tag:'Artwork' },
+        { title:'Crocs', desc:'Artwork for Crocs', cover:'videos/crocs_2.mp4', tag:'Artwork' },
+        { title:'Diesel Fragrance', desc:'Artwork for Diesel Fragrance', cover:'videos/Diesel_2.mp4', tag:'Artwork' }
+      ]
+    },
+    low: {
+      title:'Low Poly', cols:2, ratio:'16/9', tag:'Game Asset', tools:'Blender', role:'Modeling, Texturing',
+      projects: [
+        /* Platzhalter: Titel, Beschreibung und cover (Bild/Video) hier eintragen */
+        { title:'Project title', desc:'Placeholder: short description of the project.', cover:'' },
+        { title:'Project title', desc:'Placeholder: short description of the project.', cover:'' },
+        { title:'Project title', desc:'Placeholder: short description of the project.', cover:'' },
+        { title:'Project title', desc:'Placeholder: short description of the project.', cover:'' },
+        /* Das 5. Projekt führt auf die Seite mit den 3D-Ansichten und Downloads (Abschnitt GAMING ASSETS weiter unten).
+           Als cover kannst du auch ein Bild nehmen, z. B. 'models/vorschau.png'. */
+        { title:'Gaming Assets', desc:'Models, props and environments', cover:'models/cat.glb', ratio:'16/9', tag:'3D Models', go:'assets' }
+      ]
+    }
+  };
+  const defR = c => c.ratio ? parseR(c.ratio) : DEFAULT_R;
+  Object.values(collections).forEach(c => c.ratios = c.projects.map(p => p.ratio ? parseR(p.ratio) : defR(c)));
+  let col = 'high', projects, ratios, n;
+  function setCollection(key){ col = key; const c = collections[key]; projects = c.projects; ratios = c.ratios; n = projects.length; }
+  setCollection('high');
+  const projHash = i => projects[i].go || (col + '-' + i);
 
   /* Bilder (png, jpg, webp, gif), Videos (mp4) und 3D-Modelle (.glb) werden automatisch erkannt.
      Sobald eine Datei geladen ist, meldet fit() ihr echtes Seitenverhältnis zurück. */
   const isImg = f => /\.(png|jpe?g|webp|gif|avif)$/i.test(f || '');
   const isGlb = f => /\.glb$/i.test(f || '');
   const mediaTag = (f, mode) => !f ? '' : isGlb(f)
-    ? `<model-viewer src="${f}" alt="" loading="lazy" reveal="auto" camera-controls disable-zoom auto-rotate touch-action="pan-y" shadow-intensity="1" environment-image="neutral" exposure="1.1" interaction-prompt="none"></model-viewer>`
+    ? `<model-viewer src="${f}" alt="" loading="lazy" reveal="auto" ${mode === 'tile' ? '' : 'camera-controls disable-zoom auto-rotate'} touch-action="pan-y" shadow-intensity="1" environment-image="neutral" exposure="1.1" interaction-prompt="none"></model-viewer>`
     : isImg(f)
     ? `<img src="${f}" alt="" draggable="false" onload="fit(this)" onerror="this.remove()">`
     : (mode === 'tile' || mode === 'strip')
@@ -352,9 +379,9 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
     if (!w || !h) return;
     const cell = el.closest('.gcell');
     if (cell){
-      const i = +cell.dataset.i;
-      if (projects[i].ratio) return;                 /* fest vorgegeben */
-      ratios[i] = w/h;
+      const C = collections[cell.dataset.col], i = +cell.dataset.i;
+      if (C.projects[i].ratio) return;               /* fest vorgegeben */
+      C.ratios[i] = w/h;
       cell.querySelector('.gm').style.aspectRatio = w + '/' + h;
       queueLayout(); return;
     }
@@ -383,26 +410,21 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   const colsA = document.getElementById('cols-a');
   const pad = v => String(v).padStart(2,'0');
 
-  gridEl.innerHTML = projects.map((p,i) =>
-    `<article class="gcell" data-i="${i}" tabindex="0" role="link" aria-label="${p.title}">
-       <div class="gm" style="aspect-ratio:${p.ratio || '1080/1320'}"><div class="blob"></div>${mediaTag(p.cover, 'tile')}</div>
-       <div class="gcap"><span class="n">${pad(i+1)}</span><b>${p.title}</b><span class="t">${p.tag || '3D Animation'}</span></div>
-     </article>`).join('');
-  const cells = [...gridEl.children];
-  cells.forEach(c => { if (projects[+c.dataset.i].ratio) c.dataset.fixed = '1'; });
+  let cells = [], builtCol = null, ovIO = null;
 
   const effectiveCols = () => innerWidth < 700 ? 2 : +colsA.value;
   function layoutGrid(){
-    if (views.a.hidden || gridEl.hidden) return;
+    if (views.ov.hidden || gridEl.hidden) return;
     const w = gridEl.clientWidth; if (!w) return;
     const cols = effectiveCols(), gap = innerWidth < 700 ? 12 : 20;
+    const rowGap = innerWidth < 700 ? 44 : 80;      /* Abstand unter dem Titel bis zur nächsten Kachel */
     const cw = (w - gap*(cols-1)) / cols;
     const hs = new Array(cols).fill(0);
     cells.forEach(el => {
       el.style.width = cw + 'px';
       const c = hs.indexOf(Math.min(...hs));
       el.style.transform = `translate(${c*(cw+gap)}px,${hs[c]}px)`;
-      hs[c] += el.offsetHeight + gap;
+      hs[c] += el.offsetHeight + rowGap;
     });
     gridEl.style.height = Math.max(...hs) + 'px';
   }
@@ -415,34 +437,18 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 
   /* Animation läuft nur bei Hover (Maus) bzw. wenn die Kachel auf dem Handy gut sichtbar ist */
   const vidOf = el => el.querySelector('video');
-  const playV = el => { const v = vidOf(el); if (v) v.play().catch(() => {}); };
-  const stopV = el => { const v = vidOf(el); if (v){ v.pause(); try{ v.currentTime = .1; }catch(_){} } };
-  cells.forEach(c => {
-    c.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') playV(c); });
-    c.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') stopV(c); });
-    c.addEventListener('focus', () => playV(c));
-    c.addEventListener('blur', () => stopV(c));
-    c.addEventListener('click', () => go('p-' + c.dataset.i));
-    c.addEventListener('keydown', e => { if (e.key === 'Enter') go('p-' + c.dataset.i); });
-  });
-  if (matchMedia('(hover:none)').matches){
-    const io = new IntersectionObserver(es => es.forEach(e => {
-      const v = vidOf(e.target); if (!v) return;
-      if (e.isIntersecting && e.intersectionRatio >= .6) v.play().catch(() => {}); else v.pause();
-    }), { threshold:[0,.6] });
-    cells.forEach(c => io.observe(c));
-  }
+  const playV = el => { const v = vidOf(el); if (v) v.play().catch(() => {}); const mv = el.querySelector('model-viewer'); if (mv) mv.autoRotate = true; };
+  const stopV = el => { const v = vidOf(el); if (v){ v.pause(); try{ v.currentTime = .1; }catch(_){} } const mv = el.querySelector('model-viewer'); if (mv) mv.autoRotate = false; };
   const stopAll = () => cells.forEach(stopV);
 
   /* ---------- Liste ---------- */
   const peek = document.getElementById('peek');
-  listEl.innerHTML = projects.map((p,i) =>
-    `<a class="row" href="#p-${i}" data-i="${i}"><span class="n">${pad(i+1)}</span><b>${p.title}</b><span class="d">${p.desc}</span><span class="t">${p.tag || '3D Animation'}</span><span class="y">${p.year || ''}</span></a>`).join('');
   listEl.addEventListener('mouseover', e => {
     const r = e.target.closest('.row'); if (!r) return;
     const i = +r.dataset.i, p = projects[i];
     peek.style.aspectRatio = String(ratios[i]);
-    peek.innerHTML = isGlb(p.cover) ? '' : mediaTag(p.cover, 'peek');
+    peek.style.width = ratios[i] > 1.2 ? 'min(34vw,440px)' : '';      /* Querformat: etwas größere Vorschau */
+    peek.innerHTML = p.cover ? mediaTag(p.cover, 'peek') : '';       /* ohne Datei: grauer Platzhalter */
     peek.classList.add('on');
   });
   listEl.addEventListener('mouseleave', () => { peek.classList.remove('on'); peek.innerHTML = ''; });
@@ -452,6 +458,41 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
     const y = Math.max(80, Math.min(e.clientY - h/2, innerHeight - h - 70));
     peek.style.transform = `translate(${x}px,${y}px)`;
   });
+
+  /* ---------- Übersicht für den gewählten Bereich (High / Low Poly) aufbauen ---------- */
+  function buildOverview(){
+    builtCol = col;
+    const C = collections[col];
+    document.getElementById('ov-title').textContent = C.title;
+    document.getElementById('cnt').textContent = '(' + n + ')';
+    gridEl.innerHTML = projects.map((p,i) =>
+      `<article class="gcell" data-i="${i}" data-col="${col}" tabindex="0" role="link" aria-label="${p.title}">
+         <div class="gm" style="aspect-ratio:${p.ratio || C.ratio || '1080/1320'}"><div class="blob"></div>${mediaTag(p.cover, 'tile')}</div>
+         <div class="gcap"><span class="n">${pad(i+1)}</span><b>${p.title}</b><span class="t">${p.tag || C.tag}</span></div>
+       </article>`).join('');
+    cells = [...gridEl.children];
+    cells.forEach(c => { if (projects[+c.dataset.i].ratio) c.dataset.fixed = '1'; });
+    gridEl.style.height = '0px';
+    colsA.value = String(C.cols || 3);
+    listEl.innerHTML = projects.map((p,i) =>
+      `<a class="row" href="#${projHash(i)}" data-i="${i}"><span class="n">${pad(i+1)}</span><b>${p.title}</b><span class="d">${p.desc}</span><span class="t">${p.tag || C.tag}</span><span class="y">${p.year || ''}</span></a>`).join('');
+    cells.forEach(c => {
+      c.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') playV(c); });
+      c.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') stopV(c); });
+      c.addEventListener('focus', () => playV(c));
+      c.addEventListener('blur', () => stopV(c));
+      c.addEventListener('click', () => go(projHash(+c.dataset.i)));
+      c.addEventListener('keydown', e => { if (e.key === 'Enter') go(projHash(+c.dataset.i)); });
+    });
+    if (ovIO) ovIO.disconnect();
+    if (matchMedia('(hover:none)').matches){
+      ovIO = new IntersectionObserver(es => es.forEach(e => {
+        const v = vidOf(e.target); if (!v) return;
+        if (e.isIntersecting && e.intersectionRatio >= .6) v.play().catch(() => {}); else v.pause();
+      }), { threshold:[0,.6] });
+      cells.forEach(c => ovIO.observe(c));
+    }
+  }
 
   /* ---------- Raster / Liste umschalten ---------- */
   function setMode(m){
@@ -500,16 +541,16 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
       `<div class="pp">
         <aside class="pside">
           <h1>${p.title}</h1>
-          <div class="pmeta"><div class="mi"><span>Year</span><b>${p.year || '2026'}</b></div><div class="mi"><span>Tools</span><b>${p.tools || 'Blender, After Effects'}</b></div><div class="mi"><span>Role</span><b>${p.role || 'Modeling, Animation, Rendering'}</b></div></div>
+          <div class="pmeta"><div class="mi"><span>Year</span><b>${p.year || '2026'}</b></div><div class="mi"><span>Tools</span><b>${p.tools || collections[col].tools}</b></div><div class="mi"><span>Role</span><b>${p.role || collections[col].role}</b></div></div>
           <div class="pl"><i>${pad(i+1)}/</i><b>${p.desc}</b></div>
           <p class="txtp">${long}</p>
-          <a class="nx" href="#p-${(i+1) % n}">Next project</a>
+          <a class="nx" href="#${projHash((i+1) % n)}">Next project</a>
         </aside>
         <div class="gallery" id="gallery">${tiles}</div>
       </div>`;
     const g = document.getElementById('gallery');
     const sts = [...g.children];
-    sts.forEach(st => st.style.setProperty('--ar', String(files.length === 1 && ratios[i] ? ratios[i] : DEFAULT_R)));
+    sts.forEach(st => st.style.setProperty('--ar', String(files.length === 1 && ratios[i] ? ratios[i] : defR(collections[col]))));
     projRO = new ResizeObserver(queueGallery); projRO.observe(g);
     /* Videos laufen nur, solange sie im Bild sind */
     projIO = new IntersectionObserver(es => es.forEach(e => {
@@ -520,35 +561,49 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
     queueGallery();
   }
 
-  /* ---------- Navigation (mit URL, Zurück-Button funktioniert) ---------- */
-  let cur = null, savedY = 0;
+  /* ---------- Navigation (mit URL, Zurück-Button funktioniert) ----------
+     #high / #low          Übersicht High Poly / Low Poly
+     #high-3 / #low-1      Projektseite (Nummer ab 0)
+     #assets               3D-Ansichten und Downloads (Zwischenseite von Low Poly)
+     #playground, #about   */
+  let cur = null, savedY = 0, savedCol = null;
   document.body.classList.add('is-home');
   function show(key){
     const prev = cur;
-    if (prev === 'a' && key === 'p') savedY = scrollY;
+    if (prev === 'ov' && (key === 'p' || key === 'assets')){ savedY = scrollY; savedCol = col; }
     cur = key;
     home.style.display = key ? 'none' : '';
     Object.entries(views).forEach(([k,el]) => el.hidden = k !== key);
-    document.body.style.background = (key && key !== 'b') ? 'var(--light)' : 'var(--dark)';
-    document.querySelectorAll('.bar nav a').forEach(a => a.classList.toggle('on', a.dataset.go === ({p:'a'}[key] || key)));
+    document.body.style.background = (key && key !== 'assets') ? 'var(--light)' : 'var(--dark)';
+    const navKey = key === 'assets' ? 'low' : (key === 'ov' || key === 'p') ? col : key;
+    document.querySelectorAll('.bar nav a').forEach(a => a.classList.toggle('on', !!navKey && a.dataset.go === navKey));
     document.body.classList.toggle('is-home', !key);
     if (key !== 'p') document.getElementById('pj').innerHTML = '';
-    if (key === 'a') layoutGrid(); else stopAll();
+    if (key === 'ov') layoutGrid(); else stopAll();
     peek.classList.remove('on');
-    scrollTo(0, key === 'a' && prev === 'p' ? savedY : 0);
+    scrollTo(0, key === 'ov' && (prev === 'p' || prev === 'assets') && savedCol === col ? savedY : 0);
   }
   function render(){
-    const h = location.hash.slice(1);
-    let key = null;
-    if (['a','b','playground','about'].includes(h)) key = h;
-    else if (/^p-\d+$/.test(h) && projects[+h.slice(2)]){ key = 'p'; buildProject(+h.slice(2)); }
+    let h = location.hash.slice(1);
+    if (h === 'a') h = 'high'; else if (h === 'b') h = 'low';       /* alte Links */
+    let key = null, m;
+    if (h === 'high' || h === 'low'){ key = 'ov'; if (col !== h) setCollection(h); }
+    else if (h === 'assets'){ key = 'assets'; if (col !== 'low') setCollection('low'); }
+    else if (h === 'playground' || h === 'about') key = h;
+    else if ((m = h.match(/^(?:(high|low)-|p-)(\d+)$/))){
+      const c = m[1] || 'high', i = +m[2];
+      if (col !== c) setCollection(c);
+      if (projects[i] && projects[i].go){ history.replaceState(null, '', '#' + projects[i].go); render(); return; }
+      if (projects[i]){ key = 'p'; buildProject(i); }
+    }
+    if (key === 'ov' && builtCol !== col) buildOverview();
     show(key);
   }
   function go(h){ if (location.hash.slice(1) === h) render(); else location.hash = h; }
   addEventListener('hashchange', render);
   document.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => go(b.dataset.open)));
   document.querySelectorAll('[data-go]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); go(a.dataset.go); }));
-  document.querySelectorAll('.bk').forEach(a => a.addEventListener('click', e => { e.preventDefault(); go(cur === 'p' ? 'a' : ''); }));
+  document.querySelectorAll('.bk').forEach(a => a.addEventListener('click', e => { e.preventDefault(); go(cur === 'p' ? col : cur === 'assets' ? 'low' : ''); }));
   render();
 </script>
 </body>
