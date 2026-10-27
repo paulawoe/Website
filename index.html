@@ -182,10 +182,6 @@ body::before{content:"";position:fixed;z-index:10;inset:0 0 auto;height:env(safe
 
 /* Fußzeile folgt dem Seitenstil: auf hellen Seiten (High Poly, About) hell, auf Low Poly schwarz */
 body.lightpage .bar.foot{background:var(--light);color:#000;border-top:1px solid #D6D6D6}
-
-/* High Poly: Kacheln in Graustufen, Farbe erst bei Hover (am Handy, solange das Video läuft) */
-.gcell[data-col="high"] .gm img,.gcell[data-col="high"] .gm video{filter:grayscale(1);transition:filter .5s}
-.gcell[data-col="high"]:is(:hover,:focus-visible,.live) .gm :is(img,video){filter:none}
 /* ---------- Low Poly: alles invertiert (schwarz). Wird per JS über body.dark geschaltet ---------- */
 body.dark::before{background:var(--dark)}
 body.dark .bar{background:var(--dark);color:var(--dark-ink)}
@@ -362,7 +358,7 @@ body.dark .pl i{color:#5A5A5A}
       ]
     },
     low: {
-      title:'Low Poly', cols:2, ratio:'16/9', tag:'Game Asset', tools:'Blender', role:'Modeling, Texturing',
+      title:'Low Poly', cols:2, ratio:'16/9', uniform:true, tag:'Game Asset', tools:'Blender', role:'Modeling, Texturing',
       projects: [
         { title:'Light to the nations', desc:'Installation by Yael Bartana, Biennale Arte Venice 2024', cover:'Gaming projects/Venedig02.jpg',
           media:['Gaming projects/Venedig03.jpg','Gaming projects/Venedig04.jpg','Gaming projects/Venedig05.jpg','Gaming projects/Venedig06.jpg','Gaming projects/Venedig07.jpg'],
@@ -552,7 +548,6 @@ body.dark .pl i{color:#5A5A5A}
     if (matchMedia('(hover:none)').matches){
       ovIO = new IntersectionObserver(es => es.forEach(e => {
         const on = e.isIntersecting && e.intersectionRatio >= .6;
-        e.target.classList.toggle('live', on);
         const v = vidOf(e.target); if (!v) return;
         if (on){ ensureSrc(v); v.play().catch(() => {}); } else v.pause();
       }), { threshold:[0,.6] });
