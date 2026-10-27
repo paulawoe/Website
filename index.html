@@ -124,6 +124,7 @@ body::before{content:"";position:fixed;z-index:10;inset:0 0 auto;height:env(safe
 .gm model-viewer{position:absolute;inset:0;width:100%;height:100%;background:#E8E8E8;--poster-color:#E8E8E8;pointer-events:none}
 .gcap{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:baseline;padding:10px 0 0;font-size:12px;line-height:1.3;text-transform:uppercase;letter-spacing:.02em}
 .gcap .n,.gcap .t{color:var(--light-mute)}
+.gcap .t{text-align:right;max-width:13em}
 .gcap b{font-family:var(--display);font-weight:500;font-size:15px;letter-spacing:-.01em;text-decoration:underline;text-decoration-color:transparent;text-underline-offset:4px;transition:text-decoration-color .2s}
 .gcell:hover .gcap b,.gcell:focus-visible .gcap b{text-decoration-color:currentColor}
 
@@ -313,9 +314,9 @@ body.dark .pl i{color:#5A5A5A}
 <section class="detail a" id="view-about" hidden>
   <h1>About</h1>
   <div class="ab-top">
-    <!-- FOTO: Datei in den Ordner "images" legen und hier den Dateinamen anpassen (src). Fehlt die Datei, verschwindet der Bildbereich automatisch. -->
+    <!-- FOTO: Dateipfad bei src anpassen. Fehlt die Datei, verschwindet der Bildbereich automatisch. -->
     <div class="ab-ph"><img src="other/Paula.jpeg" alt="Portrait of Paula Wörndl" decoding="async" onerror="this.closest('.ab-top').classList.add('nophoto')"></div>
-    <p class="about">I am a 3D multimedia artist based in Berlin, working across high and low poly modeling, texturing, rendering and 3D animation. I create conceptual artworks for brand campaigns as well as immersive experiences in augmented and virtual reality. Currently, I am exploring how AI can be integrated into my 3D workflow to streamline and optimize processes. I am always curious to experiment with different technologies, new tools and creative approaches.</p>
+    <p class="about">I am a 3D multimedia artist based in Berlin, working across high and low poly modeling, texturing, rendering and 3D animation. I create conceptual artworks for brand campaigns as well as immersive experiences in augmented and virtual reality.</p>
   </div>
 
   <div class="ab">
@@ -440,43 +441,59 @@ body.dark .pl i{color:#5A5A5A}
       projects: [
         { title:'300.000 Volt', desc:'Von nun an jagt die Beute', cover:'videos/LABUBU_2.mp4',
           media:['videos/FAECHER_01_2.mp4','videos/PEZ_2.mp4','videos/WURFSTERN_2.mp4','videos/TAMAGOTCHIE_01_1.mp4'],
-          year:'2026', tools:'Blender', role:'Art direction, 3D', text:'Dein langer Text über das Projekt.' },
-        { title:'Sucux Coffee', desc:'Sucux Coffee Animations', cover:'videos/Sucux_Archive_sale_2.mp4',
+          year:'2026', tools:'Blender', role:'Art direction, 3D' },
+        { title:'Sucux Coffee', desc:'Animations for Sucux Coffee, Paula X Sucuk und Bratwurst', cover:'videos/Sucux_Archive_sale_2.mp4', tag:'3D Animation',
           media:['videos/Sucux_Canister_2.mp4','videos/Sucux_FAT.mp4','videos/Sucux_Formula1_2.mp4','videos/Sucux_NYE.MP4'],
-          year:'2026', tools:'Blender', role:'Art direction, 3D', text:'Dein langer Text über das Projekt.' },
-        { title:'Macaron Grinder', desc:'Product animation', cover:'videos/Final_animation.mp4', tag:'animation',
+          year:'2025/26', tools:'Blender', role:'Art direction, 3D' },
+        { title:'Macaron Grinder', desc:'Product animation', cover:'videos/Final_animation.mp4', tag:'Animation',
           media:['videos/PinkLemonade_Grinder_GrindersWithBox2.png','videos/PinkLemonade_Grinder_OnlyGrinders.png'],
-          year:'2026', tools:'Blender', role:'3D Animation together with Sucuk und Bratwurst, Art Direction: Sucuk und Bratwurst', text:'Dein langer Text über das Projekt.' },
-        { title:'Diesel Fragrance', desc:'Artwork for Diesel Fragrance', cover:'videos/Diesel_2.mp4', tag:'Artwork' },
+          year:'2026', tools:'Blender', role:'3D Animation together with Sucuk und Bratwurst, Art Direction: Sucuk und Bratwurst' },
+        { title:'Diesel Fragrance', desc:'Artwork for Diesel Fragrance, Paula X Sucuk und Bratwurst', cover:'videos/Diesel_2.mp4', tag:'Product Modeling', year:'2026' },
         { title:'Diesel X Ultrahuman', desc:'Animation Diesel X Ultrahuman', cover:'videos/Diesel_ultrahuman_2.mp4' },
-        { title:'Amore AG', desc:'Artwork for Amore AG', cover:'videos/Amore_2.mp4', tag:'Artwork',
+        { title:'Amore AG', desc:'3D animation for Amore AG, freelance work', cover:'videos/Amore_2.mp4', tag:'3D Animation',
           media:['3D/Amore01.png','3D/Amore02.png','3D/Amore03.png'],
-          year:'2026', tools:'Blender', role:'3D Animation', text:'Dein langer Text über das Projekt.' },
-        { title:'Louboutin', desc:'3D Animation for Louboutin Socials', cover:'videos/251002_Louboutin_Final_portrait_logo.mp4', tag:'3D Modelling' },
-        { title:'SamsoeSamoe', desc:'3D Product Modeling', cover:'videos/samsoe.png', tag:'3D Modelling' },
-        { title:'suitcase product modeling', desc:'3D Product Shots and Modeling', cover:'videos/suitcase.png', tag:'3D Modelling' },
-        { title:'Hold me tight', desc:'private project', cover:'videos/purple.mp4' },
-        { title:'HÖR Berlin', desc:'March Artwork for HÖR Berlin', cover:'videos/Hoer.png', tag:'Artwork' },
-        { title:'Crocs', desc:'Artwork for Crocs', cover:'videos/crocs_2.mp4', tag:'Artwork',
+          year:'2025', tools:'Blender', role:'3D Animation' },
+        { title:'Louboutin', desc:'3D Animation for Louboutin Socials, Paula X Sucuk und Bratwurst', cover:'videos/251002_Louboutin_Final_portrait_logo.mp4', tag:'Product Modeling', year:'2025' },
+        { title:'Samsøe Samsøe', desc:'3D Product Shots, Paula X Sucuk und Bratwurst', cover:'videos/samsoe.png', tag:'Product Shots',
+          media:['Samsoe01.png','Samsoe02.png','Samsoe03.png','Samsoe04.png','Samsoe05.png'],
+          year:'2026', tools:'Blender', role:'3D Modeling, Product renders' },
+        { title:'suitcase product modeling', desc:'Rimowa suitcase, private work', cover:'videos/suitcase.png', tag:'Product Modeling',
+          media:['3D/W_01.png','3D/W_02.png','3D/W_04.png','3D/W_05.png'],
+          year:'2024', tools:'Blender', role:'3D Modeling, Product renders' },
+        { title:'Hold me tight', desc:'Private work', cover:'videos/purple.mp4', tag:'3D Animation', year:'2024' },
+        { title:'HÖR Berlin', desc:'March Artwork for HÖR Berlin, freelance work', cover:'videos/Hoer.png', tag:'3D Artwork', year:'2025' },
+        { title:'Crocs', desc:'Artwork for Crocs, university project', cover:'videos/crocs_2.mp4', tag:'3D Animation, Product Modeling',
           media:['3D/Crocs01.png','3D/Crocs02.png','3D/Crocs03.png'],
-          year:'2025', tools:'Blender', role:'Art Direction, 3D Modeling', text:'Dein langer Text über das Projekt.' },
-        { title:'Augmented Emotions', desc:'AR project', cover:'videos/Angst.png', tag:'AR' },
-        { title:'Coral Reevival', desc:'Tilt5 project', cover:'videos/Corall.mp4', tag:'AR' },
-        { title:'FemFraktur', desc:'3D Animation for Font Display', cover:'videos/FemFraktur_2.mp4', tag:'3d Animation' }
+          year:'2025', tools:'Blender', role:'Art Direction, 3D Modeling' },
+        { title:'Augmented Emotions', desc:'AR project, university project', cover:'videos/Angst.png', tag:'AR, 3D Animation',
+          media:['videos/stress.png','videos/verwirrung.png','3D/AE01.png','3D/AE02.png','3D/AE03.png','3D/AE04.png','3D/AE05.png','3D/AE06.png','3D/AE07.png'],
+          year:'2023', tools:'Blender, Adobe Aero, Substance Painter', role:'Concept, Art Direction, 3D Modeling, 3D Animation',
+          text:'Augmented Emotions is an immersive experience that connects dream emotions with the waking world. The project visualizes feelings like confusion, fear, and stress in augmented reality using Adobe Aero. These emotions take shape as dynamic 3D objects with unique textures, animations, and colors. Visitors interact with these virtual elements, exploring and reflecting on their emotions in real time. The experience invites self-reflection, enhancing participants’ emotional awareness within a mixed-reality environment.' },
+        { title:'Coral Reevival', desc:'Tilt5 project, exhibited at Ars Electronica', cover:'videos/Corall.mp4', tag:'3D Animation',
+          media:['3D/bearbeitet.png','3D/IMG_2483.JPG','3D/IMG_2481.JPG','3D/Corall_0000_Layer-8.png','3D/Corall_0000_Layer-7.png','3D/Corall_0000_Layer-6.png','3D/Corall_0000_Layer-5.png','3D/Corall_0000_Layer-4.png','3D/Corall_0000_Layer-3.png','3D/Corall_0000_Layer-2.png','3D/Corall_0000_Layer-1.png'],
+          year:'2024', tools:'Blender, Substance Painter, Unity', role:'Creative Direction, 3D Animation, 3D Modelling' },
+        { title:'FemFraktur', desc:'3D Animation for Font Display', cover:'videos/FemFraktur_2.mp4', tag:'Type Design, 3D Animation',
+          year:'2025', tools:'Adobe Illustrator, Glyphs, Blender',
+          text:'FemFraktur offers a contemporary reinterpretation of traditional Fraktur, inspired by Unifraktur Maguntia. It moves beyond past right-wing associations, reclaiming Fraktur as a symbol of progress and change. With sharp edges and smooth curves, its detailed uppercase letters are balanced by stable lowercase forms. Featuring bold 3D animations, vibrant colors, and antifascist themes, FemFraktur blends history with innovation, using typography as a tool for cultural renewal and resistance.' }
       ]
     },
     low: {
       title:'Low Poly', cols:2, ratio:'16/9', uniform:true, tag:'Game Asset', tools:'Blender', role:'Modeling, Texturing',
       projects: [
-        { title:'Light to the nations', desc:'Installation by Yael Bartana, Biennale Arte Venice 2024', cover:'Gaming projects/Venedig02.jpg',
+        { title:'Light to the nations', desc:'Installation by Yael Bartana, Biennale Arte Venice 2024', cover:'Gaming projects/Venedig02.jpg', tag:'3D-Dome Projection',
           media:['Gaming projects/Venedig03.jpg','Gaming projects/Venedig04.jpg','Gaming projects/Venedig05.jpg','Gaming projects/Venedig06.jpg','Gaming projects/Venedig07.jpg'],
+          year:'2024', tools:'Unity, Blender, CC4, Substance Painter', role:'3D modeling, texturing, animation, character creation',
           text:'The installation “Generationship: Light to the Nations” by Yael Bartana, presented at the 2024 Biennale Arte in Venice, explores themes of identity and community through a striking interplay of light and spatial design. This work invites visitors to reflect on the interconnections between generations and cultures.' },
-        { title:'The Memphis Chronicles', desc:'Placeholder: short description of the project.', cover:'Gaming projects/Memphis01.jpg',
-          media:['Gaming projects/Memphis02.jpg','Gaming projects/Memphis03.jpg','Gaming projects/Memphis04.jpg','Gaming projects/Memphis05.jpg','Gaming projects/Memphis06.jpg'] },
-        { title:'Life from the other room', desc:'Freelance work for HighRoadStories', cover:'Gaming projects/lighthouse01.png',
-          media:['Gaming projects/lighthouse02.png','Gaming projects/lighthouse03.png','Gaming projects/lighthouse04.png'] },
-        { title:'Biophilia', desc:'Placeholder: short description of the project.', cover:'Gaming projects/Biophilia01.png',
-          media:['Gaming projects/Biophilia02.png','Gaming projects/Biophilia03.png','Gaming projects/Biophilia04.png','Gaming projects/Biophilia05.png'] },
+        { title:'The Memphis Chronicles', desc:'VR game for HighRoadStories, freelance work', cover:'Gaming projects/Memphis01.jpg', tag:'3D Modeling, VR',
+          media:['Gaming projects/Memphis02.jpg','Gaming projects/Memphis03.jpg','Gaming projects/Memphis04.jpg','Gaming projects/Memphis05.jpg','Gaming projects/Memphis06.jpg'],
+          year:'2023', tools:'Unity, Blender, CC4, Substance Painter' },
+        { title:'Life from the other room', desc:'Freelance work for Life From The Other Room, Berlin', cover:'Gaming projects/lighthouse01.png', tag:'Virtual Reality Experience',
+          media:['Gaming projects/lighthouse02.png','Gaming projects/lighthouse03.png','Gaming projects/lighthouse04.png'],
+          year:'2023' },
+        { title:'Biophilia', desc:'University project', cover:'Gaming projects/Biophilia01.png', tag:'VR, Photogrammetry Scan',
+          media:['Gaming projects/Biophilia02.png','Gaming projects/Biophilia03.png','Gaming projects/Biophilia04.png','Gaming projects/Biophilia05.png'],
+          year:'2023', tools:'Photogrammetry scans, Unity, spacial.io',
+          text:'Biophilia examines the alienation of humans from nature in an increasingly digitized world, revealing how digitalization can foster loneliness, darkness, and estrangement. However, the project also offers a path back to the sensuality of nature within a VR space.' },
         /* Das 5. Projekt führt auf die Seite mit den 3D-Ansichten und Downloads. */
         { title:'Gaming Assets', desc:'Models, props and environments', cover:'models/cat.glb', ratio:'16/9', tag:'3D Models', go:'assets' }
       ]
@@ -704,14 +721,14 @@ body.dark .pl i{color:#5A5A5A}
     if (projRO) projRO.disconnect();
     const files = [p.first || p.cover, ...(p.media || [])];
     const tiles = files.map((f,k) => `<div class="st" data-k="${k}"><div class="blob"></div>${mediaTag(f, 'strip')}</div>`).join('');
-    const long = p.text || 'Placeholder: more about the project goes here, such as the idea, process and making-of.';
+    const long = p.text ? `<p class="txtp">${p.text}</p>` : '';
     document.getElementById('pj').innerHTML =
       `<div class="pp">
         <aside class="pside">
           <h1>${p.title}</h1>
           <div class="pmeta"><div class="mi"><span>Year</span><b>${p.year || '2026'}</b></div><div class="mi"><span>Tools</span><b>${p.tools || collections[col].tools}</b></div><div class="mi"><span>Role</span><b>${p.role || collections[col].role}</b></div></div>
           <div class="pl"><i>${pad(i+1)}/</i><b>${p.desc}</b></div>
-          <p class="txtp">${long}</p>
+          ${long}
           <a class="nx" href="#${projHash((i+1) % n)}">Next project</a>
         </aside>
         <div class="gallery" id="gallery">${tiles}</div>
