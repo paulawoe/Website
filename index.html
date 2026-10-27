@@ -142,6 +142,51 @@ body::before{content:"";position:fixed;z-index:10;inset:0 0 auto;height:env(safe
 .peek model-viewer{display:block;width:100%;height:100%;background:#E8E8E8;--poster-color:#E8E8E8}
 @media (hover:none){.peek{display:none}}
 
+/* ---------- About ---------- */
+.ab-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,3fr);gap:clamp(24px,4vw,72px);align-items:start;margin:0 0 clamp(56px,8vw,120px)}
+.ab-ph{aspect-ratio:4/5;background:#E8E8E8;overflow:hidden}
+.ab-ph img{display:block;width:100%;height:100%;object-fit:cover}
+.ab-top.nophoto{grid-template-columns:minmax(0,1fr)}
+.ab-top.nophoto .ab-ph{display:none}
+.about{max-width:30em;margin:0;font-family:var(--display);font-weight:400;font-size:clamp(20px,2.3vw,34px);line-height:1.22;letter-spacing:-.02em}
+.al{color:inherit;text-decoration:underline;text-underline-offset:4px}
+.ab{border-bottom:1px solid #D6D6D6}
+.ab-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,3fr);gap:clamp(24px,4vw,72px);padding:28px 0;border-top:1px solid #D6D6D6}
+.ab-l{margin:0;font-size:12px;font-weight:500;line-height:1.35;text-transform:uppercase;letter-spacing:.02em;color:var(--light-mute)}
+.ab-t{list-style:none;margin:0;padding:0;font-family:var(--display);font-size:clamp(18px,1.9vw,28px);line-height:1.3;letter-spacing:-.02em}
+.ab-t li{display:inline}
+.ab-t li:not(:last-child)::after{content:", "}
+.ab-ev>div{display:grid;grid-template-columns:96px minmax(0,1.2fr) minmax(0,1.6fr);gap:16px;align-items:baseline;padding:10px 0}
+.ab-ev span{font-size:12px;letter-spacing:.02em;color:var(--light-mute)}
+.ab-ev b{font-family:var(--display);font-weight:500;font-size:clamp(17px,1.7vw,24px);letter-spacing:-.02em;line-height:1.15}
+.ab-ev i{font-style:normal;font-size:12px;line-height:1.4;text-transform:uppercase;letter-spacing:.02em;color:var(--light-mute)}
+
+/* Lebenslauf: Dropdown im gleichen Stil wie die Listenansicht der Projekte */
+.cv{border-top:1px solid var(--light-ink)}
+.cv-d{border-bottom:1px solid #D8D8D8;transition:opacity .2s}
+.cv-d summary{display:grid;grid-template-columns:56px minmax(0,1.3fr) minmax(0,1fr) 24px;gap:16px;align-items:baseline;padding:16px 0;font-size:12px;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;list-style:none}
+.cv-d summary::-webkit-details-marker{display:none}
+.cv-d summary::after{content:"+";justify-self:end;font-size:18px;line-height:1}
+.cv-d[open] summary::after{content:"−"}
+.cv-d .n,.cv-d .m{color:var(--light-mute)}
+.cv-d summary b{font-family:var(--display);font-weight:500;font-size:clamp(18px,2vw,28px);letter-spacing:-.03em;line-height:1.05}
+.cv-body{padding:0 0 28px 72px}
+.cv-i{display:grid;grid-template-columns:140px minmax(0,1.3fr) minmax(0,1.6fr);gap:16px;align-items:baseline;padding:9px 0}
+.cv-i .dt,.cv-i .ro{font-size:12px;line-height:1.4;text-transform:uppercase;letter-spacing:.02em;color:var(--light-mute)}
+.cv-i b{font-family:var(--display);font-weight:500;font-size:clamp(16px,1.5vw,20px);letter-spacing:-.02em;line-height:1.2}
+@media (hover:hover){.cv:hover .cv-d:not([open]){opacity:.3}.cv .cv-d:hover{opacity:1}}
+@media (max-width:760px){
+  .ab-top{grid-template-columns:1fr}
+  .ab-ph{max-width:60%}
+  .ab-row{grid-template-columns:1fr;gap:12px}
+  .ab-ev>div{grid-template-columns:56px minmax(0,1fr);gap:4px 12px}
+  .ab-ev i{grid-column:2}
+  .cv-d summary{grid-template-columns:40px minmax(0,1fr) 24px}
+  .cv-d .m{display:none}
+  .cv-body{padding-left:0}
+  .cv-i{grid-template-columns:1fr;gap:2px}
+}
+
 /* ---------- Projektseite ---------- */
 /* Zwei Spalten: links Text (bleibt beim Scrollen stehen, 25 %), rechts Animationen in Zweierkacheln (75 %) */
 .pp{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,3fr);gap:clamp(24px,4vw,72px);align-items:start}
@@ -267,8 +312,71 @@ body.dark .pl i{color:#5A5A5A}
 
 <section class="detail a" id="view-about" hidden>
   <h1>About</h1>
-  <p class="txtp">Placeholder: a few sentences about you, your work and what you are currently working on.</p>
-  <p class="txtp">paulawoe@gmail.com</p>
+  <div class="ab-top">
+    <!-- FOTO: Datei in den Ordner "images" legen und hier den Dateinamen anpassen (src). Fehlt die Datei, verschwindet der Bildbereich automatisch. -->
+    <div class="ab-ph"><img src="images/Paula.jpg" alt="Portrait of Paula Wörndl" decoding="async" onerror="this.closest('.ab-top').classList.add('nophoto')"></div>
+    <p class="about">I am a 3D multimedia artist based in Berlin, working across high and low poly modeling, texturing, rendering and 3D animation. I create conceptual artworks for brand campaigns as well as immersive experiences in augmented and virtual reality. Currently, I am exploring how AI can be integrated into my 3D workflow to streamline and optimize processes. I am always curious to experiment with different technologies, new tools and creative approaches.</p>
+  </div>
+
+  <div class="ab">
+    <div class="ab-row">
+      <h2 class="ab-l">Selected clients</h2>
+      <ul class="ab-t"><li>HÖR Berlin</li><li>Louboutin</li><li>Diesel</li><li>Samsøe Samsøe</li><li>Richert Beil</li><li>Amore AG</li><li>Life From The Other Room</li><li>She-Unit</li><li>Sucux Coffee</li><li>HighRoadStories</li></ul>
+    </div>
+
+    <div class="ab-row">
+      <h2 class="ab-l">Services</h2>
+      <ul class="ab-t"><li>Conceptual Mixed Media Projects</li><li>3D Animation</li><li>3D Modeling &amp; Texturing</li><li>AR / VR Experiences</li><li>Game Assets</li></ul>
+    </div>
+
+    <div class="ab-row">
+      <h2 class="ab-l">Skills &amp; tools</h2>
+      <ul class="ab-t"><li>Adobe CC</li><li>Blender</li><li>Substance Painter</li><li>Nomad Sculpt</li><li>CC4</li><li>Unity</li><li>Glyphs</li><li>Cinema 4D</li><li>TouchDesigner</li><li>Houdini</li><li>JavaScript</li><li>Python</li><li>WordPress</li></ul>
+    </div>
+
+    <div class="ab-row">
+      <h2 class="ab-l">Exhibitions &amp; features</h2>
+      <div class="ab-ev">
+        <div><span>2026</span><b>Partenza</b><i></i></div>
+        <div><span>2025</span><b>Gamescom</b><i></i></div>
+        <div><span>2025</span><b>Berlin Fashion Week</b><i></i></div>
+        <div><span>2024</span><b>item magazine #6</b><i>Featured</i></div>
+        <div><span>2024</span><b>Biennale Arte Venice</b><i>Light to the Nations</i></div>
+        <div><span>2024</span><b>Ars Electronica, Linz</b><i>Coral Reevival</i></div>
+      </div>
+    </div>
+
+    <div class="ab-row">
+      <h2 class="ab-l">Curriculum vitae</h2>
+      <div class="cv">
+        <details class="cv-d">
+          <summary><span class="n">01</span><b>Work Experience</b><span class="m">2020 – now</span></summary>
+          <div class="cv-body">
+            <div class="cv-i"><span class="dt">09/25 – 03/26</span><b>Sucuk und Bratwurst, Berlin</b><span class="ro">Internship</span></div>
+            <div class="cv-i"><span class="dt">05/25 – 07/25</span><b>Richert Beil, Berlin</b><span class="ro">Internship, Graphic Design</span></div>
+            <div class="cv-i"><span class="dt">06/23 – now</span><b>Freelance CGI Artist</b><span class="ro">3D Modeling, Animation, Graphic Design</span></div>
+            <div class="cv-i"><span class="dt">03/23 – 05/23</span><b>High Road Stories, Berlin</b><span class="ro">3D Modeling, Animation, Texturing</span></div>
+            <div class="cv-i"><span class="dt">06/21 – 07/22</span><b>HelloFresh SE, Berlin</b><span class="ro">Community Management, Website, Corporate Design</span></div>
+            <div class="cv-i"><span class="dt">06/20 – 08/20</span><b>LORENZONI-PR, Salzburg</b><span class="ro">PR Reports, Administration, Social Media Management</span></div>
+          </div>
+        </details>
+        <details class="cv-d">
+          <summary><span class="n">02</span><b>Education</b><span class="m">2012 – now</span></summary>
+          <div class="cv-body">
+            <div class="cv-i"><span class="dt">10/22 – now</span><b>HTW, Berlin</b><span class="ro">BA Visual Communications Design</span></div>
+            <div class="cv-i"><span class="dt">10/21 – 03/22</span><b>Universität der Künste, Berlin</b><span class="ro">BA Corporate and Business Communication</span></div>
+            <div class="cv-i"><span class="dt">08/19 – 03/21</span><b>NHL Stenden University of Applied Sciences, NL</b><span class="ro">BA International Tourism Management</span></div>
+            <div class="cv-i"><span class="dt">09/12 – 05/17</span><b>Higher Institute for Tourism, Salzburg, Klessheim</b><span class="ro">High School Diploma, Tourism Management Assistant Diploma</span></div>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <div class="ab-row">
+      <h2 class="ab-l">Contact</h2>
+      <ul class="ab-t"><li><a class="al" href="mailto:paulawoe@gmail.com">paulawoe@gmail.com</a></li><li><a class="al" href="https://www.instagram.com/_paulawoerndl/" target="_blank" rel="noopener">Instagram</a></li></ul>
+    </div>
+  </div>
 </section>
 
 <div class="peek" id="peek"></div>
