@@ -10,11 +10,12 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --light:#F7F7F7; --light-ink:#000000; --light-mute:#7A7A7A; --light-accent:#000000;
+  --light:#F2F2F2; --light-ink:#000000; --light-mute:#7A7A7A; --light-accent:#000000;
   --dark:#000000; --dark-ink:#FFFFFF; --dark-mute:#8A8A8A; --dark-accent:#FFFFFF;
   --tile:#141414; --line:#2E2E2E;
   --hbar-h:58px; --fbar-h:58px;
   --ease:cubic-bezier(.65,0,.2,1);
+  --navgap:clamp(14px,2vw,32px);
   --display:"Inter Tight","Helvetica Neue",Helvetica,Arial,sans-serif;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
@@ -29,7 +30,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 
 /* header */
 .bar{position:fixed;z-index:10;top:env(safe-area-inset-top,0px);left:0;right:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;align-content:center;gap:16px;height:var(--hbar-h);padding:0 clamp(16px,2.2vw,32px);background:var(--light);color:#000;pointer-events:auto;font-family:"DM Mono",ui-monospace,Menlo,monospace;font-size:12px;line-height:1.35;font-weight:500;text-transform:uppercase;letter-spacing:.02em}
-.bar nav{display:flex;gap:clamp(14px,2vw,32px);justify-self:end}
+.bar nav{display:flex;gap:var(--navgap);justify-self:end}
 body::before{content:"";position:fixed;z-index:10;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--light)}
 .bar a{pointer-events:auto;color:inherit;text-decoration:none}
 .bar nav a.on{text-decoration:underline;text-underline-offset:4px}
@@ -179,17 +180,27 @@ body::before{content:"";position:fixed;z-index:10;inset:0 0 auto;height:env(safe
 .nx{display:inline-block;margin-top:48px;font-size:12px;text-transform:uppercase;letter-spacing:.02em;color:inherit;text-decoration:underline;text-underline-offset:4px}
 
 @media (max-width:760px){
-  :root{--hbar-h:84px}
+  :root{--hbar-h:84px;--navgap:14px}
   .cr{display:none}
   .half:hover,.half:focus-visible{flex-grow:1}
   .half p{display:none}
-  .bar{grid-template-columns:1fr auto;row-gap:8px;font-size:11px}
+  .bar{grid-template-columns:1fr auto;row-gap:14px;font-size:11px}
   .bar nav{grid-column:1/-1;justify-self:start;gap:14px;order:3}
 }
-/* Größere, unsichtbare Klickfläche für Links in Kopf- und Fußzeile (ändert das Layout nicht) */
+/* Große, unsichtbare Klickfläche für Links in Kopf- und Fußzeile (ändert das Layout nicht).
+   Sie reicht über die ganze Höhe der Leiste und füllt in der Navigation die Lücke zwischen den Wörtern. */
 .bar a{position:relative}
-.bar a::after{content:"";position:absolute;inset:-20px -12px}
-@media (max-width:760px){.bar a::after{inset:-6px -8px}}
+.bar a::after{content:"";position:absolute;top:-30px;bottom:-30px;left:-16px;right:-16px}
+.bar nav a::after{left:calc(var(--navgap) / -2);right:calc(var(--navgap) / -2)}
+.ct a::after{left:-8px;right:-8px}
+@media (max-width:760px){.bar a::after{top:-7px;bottom:-7px;left:-8px;right:-8px}}
+
+/* Fußzeile folgt dem Seitenstil: auf hellen Seiten (High Poly, Playground, About) hell, auf Low Poly schwarz */
+body.lightpage .bar.foot{background:var(--light);color:#000;border-top:1px solid #D6D6D6}
+
+/* High Poly: Kacheln in Graustufen, Farbe erst bei Hover (am Handy, solange das Video läuft) */
+.gcell[data-col="high"] .gm img,.gcell[data-col="high"] .gm video{filter:grayscale(1);transition:filter .5s}
+.gcell[data-col="high"]:is(:hover,:focus-visible,.live) .gm :is(img,video){filter:none}
 /* ---------- Low Poly: alles invertiert (schwarz). Wird per JS über body.dark geschaltet ---------- */
 body.dark::before{background:var(--dark)}
 body.dark .bar{background:var(--dark);color:var(--dark-ink)}
@@ -399,6 +410,18 @@ body.dark .pl i{color:#5A5A5A}
      Sobald eine Datei geladen ist, meldet fit() ihr echtes Seitenverhältnis zurück. */
   const isImg = f => /\.(png|jpe?g|webp|gif|avif)$/i.test(f || '');
   const isGlb = f => /\.glb$/i.test(f || '');
+  /* Lazy Loading: zuerst lädt, was im Bild ist; was knapp außerhalb liegt, folgt kurz danach */
+  const lazyLoad = el => {
+    const u = el.dataset.src; if (!u) return;
+    delete el.dataset.src;
+    lazyNear.unobserve(el); lazyFar.unobserve(el);
+    el.src = u;
+  };
+  const ensureSrc = el => { if (el && el.dataset && el.dataset.src) lazyLoad(el); };
+  const lazyNear = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) lazyLoad(e.target); }), { rootMargin:'100px 0px' });
+  const lazyFar = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) setTimeout(() => lazyLoad(e.target), 800); }), { rootMargin:'1500px 0px' });
+  const lazyScan = root => root.querySelectorAll('[data-src]').forEach(el => { lazyNear.observe(el); lazyFar.observe(el); });
+
   const enc = f => encodeURI(f);      /* Leerzeichen & Co. im Pfad sicher machen */
   function bad(el){                    /* Datei nicht gefunden: Pfad anzeigen statt stillschweigend zu verschwinden */
     const src = decodeURI((el.getAttribute('src') || '').split('#')[0]);
@@ -408,13 +431,14 @@ body.dark .pl i{color:#5A5A5A}
     note.style.cssText = 'position:absolute;inset:0;display:grid;place-items:center;padding:12px;text-align:center;font-size:11px;line-height:1.4;word-break:break-all;color:#d00;background:inherit;text-transform:none';
     el.replaceWith(note);
   }
-  const mediaTag = (f, mode) => !f ? '' : isGlb(f)
-    ? `<model-viewer src="${enc(f)}" alt="" loading="lazy" reveal="auto" ${mode === 'tile' ? '' : 'camera-controls disable-zoom auto-rotate'} touch-action="pan-y" shadow-intensity="1" environment-image="neutral" exposure="1.1" interaction-prompt="none"></model-viewer>`
-    : isImg(f)
-    ? `<img src="${enc(f)}" alt="" draggable="false" onload="fit(this)" onerror="bad(this)">`
-    : (mode === 'tile' || mode === 'strip')
-      ? `<video src="${enc(f)}#t=0.1" muted loop playsinline preload="metadata" onloadedmetadata="fit(this)" onerror="bad(this)"></video>`
-      : `<video src="${enc(f)}" autoplay muted loop playsinline onloadedmetadata="fit(this)" onerror="bad(this)"></video>`;
+  const mediaTag = (f, mode) => {
+    if (!f) return '';
+    const u = enc(f), lazy = mode !== 'peek';                  /* Vorschau beim Hovern lädt sofort */
+    if (isGlb(f)) return `<model-viewer src="${u}" alt="" loading="lazy" reveal="auto" ${mode === 'tile' ? '' : 'camera-controls disable-zoom auto-rotate'} touch-action="pan-y" shadow-intensity="1" environment-image="neutral" exposure="1.1" interaction-prompt="none"></model-viewer>`;
+    if (isImg(f)) return `<img ${lazy ? 'data-src' : 'src'}="${u}" alt="" draggable="false" decoding="async" onload="fit(this)" onerror="bad(this)">`;
+    if (mode === 'tile' || mode === 'strip') return `<video ${lazy ? 'data-src' : 'src'}="${u}#t=0.1" muted loop playsinline preload="metadata" onloadedmetadata="fit(this)" onerror="bad(this)"></video>`;
+    return `<video ${lazy ? 'data-src' : 'src'}="${u}" autoplay muted loop playsinline onloadedmetadata="fit(this)" onerror="bad(this)"></video>`;
+  };
 
   function fit(el){
     const w = el.videoWidth || el.naturalWidth, h = el.videoHeight || el.naturalHeight;
@@ -443,7 +467,8 @@ body.dark .pl i{color:#5A5A5A}
   ];
   const pgGrid = document.getElementById('pg-grid');
   pgGrid.innerHTML = playground.map(p => `<article class="pg"><div class="m"><div class="blob"></div>${mediaTag(p[2], 'tile')}</div><div><div class="meta">${p[3]}</div><b>${p[0]}</b><p>${p[1]}</p></div></article>`).join('');
-  pgGrid.addEventListener('mouseover', e => { const c = e.target.closest('.pg'), v = c && c.querySelector('video'); if (v && v.paused) v.play().catch(() => {}); });
+  pgGrid.addEventListener('mouseover', e => { const c = e.target.closest('.pg'), v = c && c.querySelector('video'); if (v && v.paused){ ensureSrc(v); v.play().catch(() => {}); } });
+  lazyScan(pgGrid);
   pgGrid.addEventListener('mouseout', e => { const c = e.target.closest('.pg'); if (c && !c.contains(e.relatedTarget)) { const v = c.querySelector('video'); if (v) v.pause(); } });
 
   /* ---------- Raster (Masonry) ---------- */
@@ -479,7 +504,7 @@ body.dark .pl i{color:#5A5A5A}
 
   /* Animation läuft nur bei Hover (Maus) bzw. wenn die Kachel auf dem Handy gut sichtbar ist */
   const vidOf = el => el.querySelector('video');
-  const playV = el => { const v = vidOf(el); if (v) v.play().catch(() => {}); const mv = el.querySelector('model-viewer'); if (mv) mv.autoRotate = true; };
+  const playV = el => { const v = vidOf(el); if (v){ ensureSrc(v); v.play().catch(() => {}); } const mv = el.querySelector('model-viewer'); if (mv) mv.autoRotate = true; };
   const stopV = el => { const v = vidOf(el); if (v){ v.pause(); try{ v.currentTime = .1; }catch(_){} } const mv = el.querySelector('model-viewer'); if (mv) mv.autoRotate = false; };
   const stopAll = () => cells.forEach(stopV);
 
@@ -513,6 +538,7 @@ body.dark .pl i{color:#5A5A5A}
          <div class="gcap"><span class="n">${pad(i+1)}</span><b>${p.title}</b><span class="t">${p.tag || C.tag}</span></div>
        </article>`).join('');
     cells = [...gridEl.children];
+    lazyScan(gridEl);
     cells.forEach(c => { if (projects[+c.dataset.i].ratio) c.dataset.fixed = '1'; });
     gridEl.style.height = '0px';
     colsA.value = String(C.cols || 3);
@@ -529,8 +555,10 @@ body.dark .pl i{color:#5A5A5A}
     if (ovIO) ovIO.disconnect();
     if (matchMedia('(hover:none)').matches){
       ovIO = new IntersectionObserver(es => es.forEach(e => {
+        const on = e.isIntersecting && e.intersectionRatio >= .6;
+        e.target.classList.toggle('live', on);
         const v = vidOf(e.target); if (!v) return;
-        if (e.isIntersecting && e.intersectionRatio >= .6) v.play().catch(() => {}); else v.pause();
+        if (on){ ensureSrc(v); v.play().catch(() => {}); } else v.pause();
       }), { threshold:[0,.6] });
       cells.forEach(c => ovIO.observe(c));
     }
@@ -592,12 +620,13 @@ body.dark .pl i{color:#5A5A5A}
       </div>`;
     const g = document.getElementById('gallery');
     const sts = [...g.children];
+    lazyScan(g);
     sts.forEach(st => st.style.setProperty('--ar', String(files.length === 1 && ratios[i] ? ratios[i] : defR(collections[col]))));
     projRO = new ResizeObserver(queueGallery); projRO.observe(g);
     /* Videos laufen nur, solange sie im Bild sind */
     projIO = new IntersectionObserver(es => es.forEach(e => {
       const v = e.target.querySelector('video'); if (!v) return;
-      if (e.isIntersecting) v.play().catch(() => {}); else v.pause();
+      if (e.isIntersecting){ ensureSrc(v); v.play().catch(() => {}); } else v.pause();
     }), { threshold:.25 });
     sts.forEach(st => projIO.observe(st));
     queueGallery();
@@ -619,6 +648,7 @@ body.dark .pl i{color:#5A5A5A}
     /* Low Poly (Übersicht, Projektseiten, Assets-Seite) ist invertiert: schwarzer Hintergrund, weiße Schrift */
     const dark = key === 'assets' || ((key === 'ov' || key === 'p') && col === 'low');
     document.body.classList.toggle('dark', dark);
+    document.body.classList.toggle('lightpage', !!key && !dark);
     document.getElementById('cols-wrap').classList.toggle('lt', !dark);
     document.body.style.background = (key && !dark) ? 'var(--light)' : 'var(--dark)';
     const navKey = key === 'assets' ? 'low' : (key === 'ov' || key === 'p') ? col : key;
