@@ -204,6 +204,13 @@ body::before{content:"";position:fixed;z-index:10;inset:0 0 auto;height:env(safe
 .st video,.st img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
 .st .blob{width:30%;background:var(--light-ink)}
 .st model-viewer{position:absolute;inset:0;width:100%;height:100%;background:#E8E8E8;--poster-color:#E8E8E8;cursor:grab}
+/* Reihen-Layout (rows): jede Reihe teilt die Breite gleichmäßig, Bilder behalten ihr Format */
+.gallery.rows{display:grid;row-gap:clamp(16px,2vw,32px)}
+.grow{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:clamp(8px,1.2vw,20px);align-items:start}
+.gallery.rows .st{position:relative;left:auto;top:auto;width:100%;transform:none}
+.st.tr,body.dark .st.tr{background:transparent}
+.st.tr .blob{display:none}
+@media (max-width:760px){.grow.many{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .pl{margin-bottom:28px}
 .pl i{display:block;font-style:normal;font-family:var(--display);font-size:clamp(24px,2.4vw,36px);color:#BDBDBD;letter-spacing:-.03em;line-height:1}
 .pl b{display:block;font-family:var(--display);text-transform:uppercase;font-weight:500;letter-spacing:-.03em;font-size:clamp(18px,1.7vw,26px);line-height:1.05;margin-top:10px}
@@ -427,6 +434,7 @@ body.dark .pl i{color:#5A5A5A}
                 year, tools, role   Angaben links auf der Projektseite
                 first   erstes Medium der Projektseite ('' = nimmt cover)
                 media   weitere Bilder, Videos oder .glb für die Projektseite
+                rows    stattdessen: feste Reihen, z. B. [['a.png','b.png','c.png'],['d.png','e.png']] – jede Reihe teilt die Breite gleichmäßig
                 text    langer Text links auf der Projektseite
                 (je Bereich: cols = feste Spaltenzahl der Übersicht, ratio = Format der Kacheln,
                  uniform:true = alle kacheln exakt in diesem Format, Videos/Bilder werden zugeschnitten;
@@ -455,10 +463,10 @@ body.dark .pl i{color:#5A5A5A}
           year:'2025', tools:'Blender', role:'3D Animation' },
         { title:'Louboutin', desc:'3D Animation for Louboutin Socials, Paula X Sucuk und Bratwurst', cover:'videos/251002_Louboutin_Final_portrait_logo.mp4', tag:'Product Modeling', year:'2025' },
         { title:'Samsøe Samsøe', desc:'3D Product Shots, Paula X Sucuk und Bratwurst', cover:'videos/samsoe.png', tag:'Product Shots',
-          media:['Samsoe01.png','Samsoe02.png','Samsoe03.png','Samsoe04.png','Samsoe05.png'],
+          media:['3D/Samsoe01.png','3D/Samsoe02.png','3D/Samsoe03.png','3D/Samsoe04.png','3D/Samsoe05.png'],
           year:'2026', tools:'Blender', role:'3D Modeling, Product renders' },
         { title:'suitcase product modeling', desc:'Rimowa suitcase, private work', cover:'videos/suitcase.png', tag:'Product Modeling',
-          media:['3D/W_01.png','3D/W_02.png','3D/W_04.png','3D/W_05.png'],
+          media:['3D/W_02.png','3D/W_04.png','3D/W_05.png'],
           year:'2024', tools:'Blender', role:'3D Modeling, Product renders' },
         { title:'Hold me tight', desc:'Private work', cover:'videos/purple.mp4', tag:'3D Animation', year:'2024' },
         { title:'HÖR Berlin', desc:'March Artwork for HÖR Berlin, freelance work', cover:'videos/Hoer.png', tag:'3D Artwork', year:'2025' },
@@ -466,11 +474,19 @@ body.dark .pl i{color:#5A5A5A}
           media:['3D/Crocs01.png','3D/Crocs02.png','3D/Crocs03.png'],
           year:'2025', tools:'Blender', role:'Art Direction, 3D Modeling' },
         { title:'Augmented Emotions', desc:'AR project, university project', cover:'videos/Angst.png', tag:'AR, 3D Animation',
-          media:['videos/stress.png','videos/verwirrung.png','3D/AE01.png','3D/AE02.png','3D/AE03.png','3D/AE04.png','3D/AE05.png','3D/AE06.png','3D/AE07.png'],
+          /* rows: jede Zeile = Bilder gleich breit nebeneinander (wie im Portfolio): oben 3 Poster, darunter die AE-Bilder in einer Reihe */
+          rows:[
+            ['videos/verwirrung.png','videos/stress.png','videos/Angst.png'],
+            ['3D/AE01.png','3D/AE02.png','3D/AE03.png','3D/AE05.png','3D/AE07.png']
+          ],
           year:'2023', tools:'Blender, Adobe Aero, Substance Painter', role:'Concept, Art Direction, 3D Modeling, 3D Animation',
           text:'Augmented Emotions is an immersive experience that connects dream emotions with the waking world. The project visualizes feelings like confusion, fear, and stress in augmented reality using Adobe Aero. These emotions take shape as dynamic 3D objects with unique textures, animations, and colors. Visitors interact with these virtual elements, exploring and reflecting on their emotions in real time. The experience invites self-reflection, enhancing participants’ emotional awareness within a mixed-reality environment.' },
         { title:'Coral Reevival', desc:'Tilt5 project, exhibited at Ars Electronica', cover:'videos/Corall.mp4', tag:'3D Animation',
-          media:['3D/bearbeitet.png','3D/IMG_2483.JPG','3D/IMG_2481.JPG','3D/Corall_0000_Layer-8.png','3D/Corall_0000_Layer-7.png','3D/Corall_0000_Layer-6.png','3D/Corall_0000_Layer-5.png','3D/Corall_0000_Layer-4.png','3D/Corall_0000_Layer-3.png','3D/Corall_0000_Layer-2.png','3D/Corall_0000_Layer-1.png'],
+          rows:[
+            ['videos/Corall.mp4','3D/bearbeitet.png'],
+            ['3D/IMG_2483.JPG','3D/IMG_2481.JPG'],
+            ['3D/Corall_0000_Layer-8.png','3D/Corall_0001_Layer-7.png','3D/Corall_0002_Layer-6.png','3D/Corall_0003_Layer-5.png','3D/Corall_0004_Layer-4.png','3D/Corall_0005_Layer-3.png','3D/Corall_0006_Layer-2.png','3D/Corall_0007_Layer-1.png']
+          ],
           year:'2024', tools:'Blender, Substance Painter, Unity', role:'Creative Direction, 3D Animation, 3D Modelling' },
         { title:'FemFraktur', desc:'3D Animation for Font Display', cover:'videos/FemFraktur_2.mp4', tag:'Type Design, 3D Animation',
           year:'2025', tools:'Adobe Illustrator, Glyphs, Blender',
@@ -510,6 +526,30 @@ body.dark .pl i{color:#5A5A5A}
      Sobald eine Datei geladen ist, meldet fit() ihr echtes Seitenverhältnis zurück. */
   const isImg = f => /\.(png|jpe?g|webp|gif|avif)$/i.test(f || '');
   const isGlb = f => /\.glb$/i.test(f || '');
+  /* Videos zuschneiden: start = ab welcher Sekunde es beginnt, cut = wie viele Sekunden am Ende abgeschnitten werden.
+     Gilt überall, wo diese Datei vorkommt (Kachel, Vorschau, Projektseite). Das Video läuft zwischen start und Ende in Endlosschleife. */
+  /* Transparente PNGs: bekommen keinen grauen Hintergrund. Eintrag = Dateiname oder nur der Anfang des Namens (alle passenden Dateien). */
+  const transparent = ['3D/Corall_0000_Layer'];
+  const isTr = f => transparent.some(p => String(f).startsWith(p));
+  const trims = {
+    'videos/crocs_2.mp4': { start:3, cut:10 }
+  };
+  function setupTrim(v){
+    if (v._trim) return;
+    const start = +v.dataset.ts || 0, cut = +v.dataset.tc || 0;
+    const end = Math.max(start + 1, (v.duration || 0) - cut);
+    v._trim = { start, end };
+    v.loop = false; v.removeAttribute('loop');
+    const tick = () => {
+      if (v.paused){ v._raf = 0; return; }
+      if (v.currentTime >= v._trim.end) v.currentTime = v._trim.start;
+      v._raf = requestAnimationFrame(tick);
+    };
+    v.addEventListener('play', () => { if (!v._raf) v._raf = requestAnimationFrame(tick); });
+    v.addEventListener('ended', () => { v.currentTime = v._trim.start; v.play().catch(() => {}); });
+    v.currentTime = start + .05;
+    if (!v.paused && !v._raf) v._raf = requestAnimationFrame(tick);
+  }
   /* Lazy Loading: zuerst lädt, was im Bild ist; was knapp außerhalb liegt, folgt kurz danach */
   const lazyLoad = el => {
     const u = el.dataset.src; if (!u) return;
@@ -536,11 +576,14 @@ body.dark .pl i{color:#5A5A5A}
     const u = enc(f), lazy = mode !== 'peek';                  /* Vorschau beim Hovern lädt sofort */
     if (isGlb(f)) return `<model-viewer src="${u}" alt="" loading="lazy" reveal="auto" ${mode === 'tile' ? '' : 'camera-controls disable-zoom auto-rotate'} touch-action="pan-y" shadow-intensity="1" environment-image="neutral" exposure="1.1" interaction-prompt="none"></model-viewer>`;
     if (isImg(f)) return `<img ${lazy ? 'data-src' : 'src'}="${u}" alt="" draggable="false" decoding="async" onload="fit(this)" onerror="bad(this)">`;
-    if (mode === 'tile' || mode === 'strip') return `<video ${lazy ? 'data-src' : 'src'}="${u}#t=0.1" muted loop playsinline preload="metadata" onloadedmetadata="fit(this)" onerror="bad(this)"></video>`;
-    return `<video ${lazy ? 'data-src' : 'src'}="${u}" autoplay muted loop playsinline onloadedmetadata="fit(this)" onerror="bad(this)"></video>`;
+    const t = trims[f];
+    const ta = t ? ` data-ts="${t.start}" data-tc="${t.cut}"` : '', lp = t ? '' : ' loop';
+    if (mode === 'tile' || mode === 'strip') return `<video ${lazy ? 'data-src' : 'src'}="${u}#t=${t ? t.start : 0.1}" muted${lp} playsinline preload="metadata"${ta} onloadedmetadata="fit(this)" onerror="bad(this)"></video>`;
+    return `<video ${lazy ? 'data-src' : 'src'}="${u}${t ? '#t=' + t.start : ''}" autoplay muted${lp} playsinline${ta} onloadedmetadata="fit(this)" onerror="bad(this)"></video>`;
   };
 
   function fit(el){
+    if (el.tagName === 'VIDEO' && el.dataset.ts !== undefined) setupTrim(el);
     const w = el.videoWidth || el.naturalWidth, h = el.videoHeight || el.naturalHeight;
     if (!w || !h) return;
     const cell = el.closest('.gcell');
@@ -591,7 +634,7 @@ body.dark .pl i{color:#5A5A5A}
   /* Animation läuft nur bei Hover (Maus) bzw. wenn die Kachel auf dem Handy gut sichtbar ist */
   const vidOf = el => el.querySelector('video');
   const playV = el => { const v = vidOf(el); if (v){ ensureSrc(v); v.play().catch(() => {}); } const mv = el.querySelector('model-viewer'); if (mv) mv.autoRotate = true; };
-  const stopV = el => { const v = vidOf(el); if (v){ v.pause(); try{ v.currentTime = .1; }catch(_){} } const mv = el.querySelector('model-viewer'); if (mv) mv.autoRotate = false; };
+  const stopV = el => { const v = vidOf(el); if (v){ v.pause(); try{ v.currentTime = v._trim ? v._trim.start + .05 : .1; }catch(_){} } const mv = el.querySelector('model-viewer'); if (mv) mv.autoRotate = false; };
   const stopAll = () => cells.forEach(stopV);
 
   /* ---------- Liste: Vorschau folgt der Maus ----------
@@ -694,7 +737,7 @@ body.dark .pl i{color:#5A5A5A}
   /* Masonry mit 2 Spalten: jede Kachel kommt in die jeweils kürzere Spalte */
   function layoutGallery(){
     const g = document.getElementById('gallery');
-    if (!g || !g.clientWidth) return;
+    if (!g || !g.clientWidth || g.classList.contains('rows')) return;
     const w = g.clientWidth, gap = Math.round(Math.min(32, Math.max(12, innerWidth * .018)));
     const cw = (w - gap) / 2, hs = [0, 0];
     [...g.children].forEach(el => {
@@ -719,8 +762,13 @@ body.dark .pl i{color:#5A5A5A}
     const p = projects[i];
     if (projIO) projIO.disconnect();
     if (projRO) projRO.disconnect();
-    const files = [p.first || p.cover, ...(p.media || [])];
-    const tiles = files.map((f,k) => `<div class="st" data-k="${k}"><div class="blob"></div>${mediaTag(f, 'strip')}</div>`).join('');
+    const rowsMode = Array.isArray(p.rows) && p.rows.length > 0;
+    const stTag = (f,k) => `<div class="st${isTr(f) ? ' tr' : ''}" data-k="${k}"><div class="blob"></div>${mediaTag(f, 'strip')}</div>`;
+    const files = rowsMode ? p.rows.flat() : [p.first || p.cover, ...(p.media || [])];
+    let k0 = 0;
+    const tiles = rowsMode
+      ? p.rows.map(r => `<div class="grow${r.length > 3 ? ' many' : ''}" style="--n:${r.length}">${r.map(f => stTag(f, k0++)).join('')}</div>`).join('')
+      : files.map(stTag).join('');
     const long = p.text ? `<p class="txtp">${p.text}</p>` : '';
     document.getElementById('pj').innerHTML =
       `<div class="pp">
@@ -731,10 +779,10 @@ body.dark .pl i{color:#5A5A5A}
           ${long}
           <a class="nx" href="#${projHash((i+1) % n)}">Next project</a>
         </aside>
-        <div class="gallery" id="gallery">${tiles}</div>
+        <div class="gallery${rowsMode ? ' rows' : ''}" id="gallery">${tiles}</div>
       </div>`;
     const g = document.getElementById('gallery');
-    const sts = [...g.children];
+    const sts = [...g.querySelectorAll('.st')];
     lazyScan(g);
     sts.forEach(st => st.style.setProperty('--ar', String(files.length === 1 && ratios[i] ? ratios[i] : defR(collections[col]))));
     projRO = new ResizeObserver(queueGallery); projRO.observe(g);
