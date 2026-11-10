@@ -137,7 +137,7 @@ body::before{content:"";position:fixed;z-index:10;inset:0 0 auto;height:env(safe
 /* Feed: alle Projekte untereinander, jedes mit Titelzeile und ALLEN Bildern/Videos als Galerie */
 #feed{display:block}
 .fproj{margin-bottom:clamp(80px,12vw,180px)}
-.fhead{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1.6fr) minmax(0,1.2fr) auto;gap:16px clamp(16px,2.4vw,40px);align-items:start;margin-bottom:16px;font-size:12px;line-height:1.35;text-transform:uppercase;letter-spacing:.02em}
+.fhead{display:grid;grid-template-columns:auto minmax(0,1.2fr) minmax(0,1.6fr) minmax(0,1.2fr) auto;gap:16px clamp(16px,2.4vw,40px);align-items:start;margin-bottom:16px;font-size:12px;line-height:1.35;text-transform:uppercase;letter-spacing:.02em}
 .fhead>div{display:flex;flex-direction:column;gap:2px}
 .fl{color:var(--light-mute)}
 .fl2{margin-top:8px}
@@ -150,8 +150,8 @@ a.ft:hover{text-decoration:underline;text-underline-offset:4px}
 .fgal.fcols .st{position:absolute;left:0;top:0}
 .fgal.fcols.one .st{position:relative}
 .fgal.one .st{width:min(100%,calc(78vh * var(--ar,.818)))}
-@media (max-width:900px){.fhead{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.fy{align-items:flex-start;text-align:left}}
-@media (max-width:700px){.fhead{grid-template-columns:1fr}}
+.fn{min-width:2.4em}
+@media (max-width:900px){.fhead{grid-template-columns:auto minmax(0,1fr)}.fhead>div:nth-child(n+3){grid-column:2}.fy{align-items:flex-start;text-align:left}}
 
 /* Liste */
 #list{border-top:1px solid var(--light-ink)}
@@ -334,9 +334,9 @@ body.dark .pl i{color:#5A5A5A}
     <div class="sw">Selected Works<sup id="cnt"></sup></div>
     <div class="rt">
       <div class="modes" role="group" aria-label="View">
-        <button type="button" data-mode="grid" class="on">Grid</button>
+        <button type="button" data-mode="feed" class="on">Feed</button>
         <button type="button" data-mode="list">List</button>
-        <button type="button" data-mode="feed">Feed</button>
+        <button type="button" data-mode="grid">Grid</button>
       </div>
     </div>
   </div>
@@ -477,6 +477,7 @@ body.dark .pl i{color:#5A5A5A}
                 (je Bereich: cols = feste Spaltenzahl der Übersicht, ratio = Format der Kacheln,
                  uniform:true = alle kacheln exakt in diesem Format, Videos/Bilder werden zugeschnitten;
                  die Projektseite zeigt immer das echte Format)
+                hidden  true = Projekt ausblenden (überall, Zähler und Nummern passen sich an). Zum Einblenden die Zeile löschen oder false setzen.
                 go      Klick führt direkt auf eine andere Seite statt auf eine Projektseite
                         ('assets' = die Seite mit den 3D-Ansichten und Downloads) */
   const DEFAULT_R = 1080/1320;
@@ -528,7 +529,8 @@ body.dark .pl i{color:#5A5A5A}
             ['3D/Corall_0000_Layer-8.png','3D/Corall_0001_Layer-7.png','3D/Corall_0002_Layer-6.png','3D/Corall_0003_Layer-5.png','3D/Corall_0004_Layer-4.png','3D/Corall_0005_Layer-3.png','3D/Corall_0006_Layer-2.png','3D/Corall_0007_Layer-1.png']
           ],
           year:'2024', tools:'Blender, Substance Painter, Unity', role:'Creative Direction, 3D Animation, 3D Modelling' },
-        { title:'FemFraktur', desc:'3D Animation for Font Display', cover:'videos/FemFraktur_2.mp4', tag:'Type Design, 3D Animation',
+        { hidden:true,    /* ausgeblendet – zum Einblenden diese Zeile löschen */
+          title:'FemFraktur', desc:'3D Animation for Font Display', cover:'videos/FemFraktur_2.mp4', tag:'Type Design, 3D Animation',
           year:'2025', tools:'Adobe Illustrator, Glyphs, Blender',
           text:'FemFraktur offers a contemporary reinterpretation of traditional Fraktur, inspired by Unifraktur Maguntia. It moves beyond past right-wing associations, reclaiming Fraktur as a symbol of progress and change. With sharp edges and smooth curves, its detailed uppercase letters are balanced by stable lowercase forms. Featuring bold 3D animations, vibrant colors, and antifascist themes, FemFraktur blends history with innovation, using typography as a tool for cultural renewal and resistance.' }
       ]
@@ -556,6 +558,8 @@ body.dark .pl i{color:#5A5A5A}
     }
   };
   const defR = c => c.ratio ? parseR(c.ratio) : DEFAULT_R;
+  /* Ausgeblendete Projekte (hidden:true) fallen überall weg: Raster, Liste, Feed, Zähler und Nummerierung passen sich automatisch an. */
+  Object.values(collections).forEach(c => c.projects = c.projects.filter(p => !p.hidden));
   Object.values(collections).forEach(c => c.ratios = c.projects.map(p => p.ratio ? parseR(p.ratio) : defR(c)));
   let col = 'high', projects, ratios, n;
   function setCollection(key){ col = key; const c = collections[key]; projects = c.projects; ratios = c.ratios; n = projects.length; }
@@ -784,10 +788,11 @@ body.dark .pl i{color:#5A5A5A}
     const more = p.text ? `<a class="fh-more" href="#${projHash(i)}">Read more</a>` : '';
     return `<section class="fproj">
       <header class="fhead">
+        <div class="fn"><span class="fl">No.</span><span class="ft">${pad(i+1)}</span></div>
         <div><span class="fl">Project</span><a class="ft" href="#${projHash(i)}">${p.title}</a></div>
         <div><span class="fl">${p.tag || C.tag}</span><span>${p.desc}</span>${more}</div>
         <div><span class="fl">Role</span><span>${p.role || C.role}</span><span class="fl fl2">Tools</span><span>${p.tools || C.tools}</span></div>
-        <div class="fy"><span class="fl">${p.year || ''}</span><span class="ft">${pad(i+1)}</span></div>
+        <div class="fy"><span class="fl">Year</span><span class="ft">${p.year || ''}</span></div>
       </header>
       ${gal}
     </section>`;
@@ -998,7 +1003,7 @@ body.dark .pl i{color:#5A5A5A}
   document.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => go(b.dataset.open)));
   document.querySelectorAll('[data-go]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); go(a.dataset.go); }));
   document.querySelectorAll('.bk').forEach(a => a.addEventListener('click', e => { e.preventDefault(); go(cur === 'p' ? col : cur === 'assets' ? 'low' : ''); }));
-  setMode(innerWidth < 700 ? 'feed' : 'grid');        /* Handy: Start im Feed, Desktop: im Raster */
+  setMode('feed');        /* Startansicht der Übersichten: 'feed', 'list' oder 'grid' */
   render();
 
   /* Vorab laden: Sobald die Seite steht, werden im Hintergrund schon die Vorschaubilder der ersten Kacheln geholt,
