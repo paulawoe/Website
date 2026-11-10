@@ -217,6 +217,14 @@ body::before{content:"";position:fixed;z-index:10;inset:0 0 auto;height:env(safe
 .st.tr,body.dark .st.tr{background:transparent}
 .st.tr .blob{display:none}
 @media (max-width:760px){.grow.many{grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* Layout 'top': Text oben, Medien darunter in einer Reihe */
+.pp.top{display:block}
+.pp.top h1{font-size:clamp(36px,6vw,96px);margin:0 0 24px}
+.pp.top .pmeta{flex-direction:row;flex-wrap:wrap;gap:12px clamp(20px,3vw,48px);margin-bottom:32px}
+.pbot{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:clamp(24px,4vw,72px);align-items:start;margin-bottom:clamp(40px,6vw,96px)}
+.pbot .pl{margin-bottom:0}
+.pbot .txtp{margin:0;max-width:60ch;font-size:13px;line-height:1.5}
+@media (max-width:900px){.pbot{grid-template-columns:1fr}}
 .pl{margin-bottom:28px}
 .pl i{display:block;font-style:normal;font-family:var(--display);font-size:clamp(24px,2.4vw,36px);color:#BDBDBD;letter-spacing:-.03em;line-height:1}
 .pl b{display:block;font-family:var(--display);text-transform:uppercase;font-weight:500;letter-spacing:-.03em;font-size:clamp(18px,1.7vw,26px);line-height:1.05;margin-top:10px}
@@ -442,6 +450,7 @@ body.dark .pl i{color:#5A5A5A}
                 year, tools, role   Angaben links auf der Projektseite
                 first   erstes Medium der Projektseite ('' = nimmt cover)
                 media   weitere Bilder, Videos oder .glb für die Projektseite
+                layout  'top' = Text oben über die ganze Breite, Medien darunter (Standard: Text links, Medien rechts)
                 rows    stattdessen: feste Reihen, z. B. [['a.png','b.png','c.png'],['d.png','e.png']] – jede Reihe teilt die Breite gleichmäßig
                 text    langer Text links auf der Projektseite
                 (je Bereich: cols = feste Spaltenzahl der Übersicht, ratio = Format der Kacheln,
@@ -459,7 +468,9 @@ body.dark .pl i{color:#5A5A5A}
           media:['videos/FAECHER_01_2.mp4','videos/PEZ_2.mp4','videos/WURFSTERN_2.mp4','videos/TAMAGOTCHIE_01_1.mp4'],
           year:'2026', tools:'Blender', role:'Art direction, 3D' },
         { title:'Sucux Coffee', desc:'Animations for Sucux Coffee, Paula X Sucuk und Bratwurst', cover:'videos/Sucux_Archive_sale_2.mp4', tag:'3D Animation',
-          media:['videos/Sucux_Canister_2.mp4','videos/Sucux_FAT.mp4','videos/Sucux_Formula1_2.mp4','videos/Sucux_NYE.MP4'],
+          /* layout:'top' = Text oben, darunter die Animationen in einer Reihe nebeneinander (wie die frühere Ansicht) */
+          layout:'top',
+          rows:[['videos/Sucux_Archive_sale_2.mp4','videos/Sucux_Canister_2.mp4','videos/Sucux_FAT.mp4','videos/Sucux_Formula1_2.mp4','videos/Sucux_NYE.MP4']],
           year:'2025/26', tools:'Blender', role:'Art direction, 3D' },
         { title:'Macaron Grinder', desc:'Product animation', cover:'videos/Final_animation.mp4', tag:'Animation',
           media:['videos/PinkLemonade_Grinder_GrindersWithBox2.png','videos/PinkLemonade_Grinder_OnlyGrinders.png'],
@@ -511,15 +522,15 @@ body.dark .pl i{color:#5A5A5A}
         { title:'The Memphis Chronicles', desc:'VR game for HighRoadStories, freelance work', cover:'Gaming projects/Memphis01.jpg', tag:'3D Modeling, VR',
           media:['Gaming projects/Memphis02.jpg','Gaming projects/Memphis03.jpg','Gaming projects/Memphis04.jpg','Gaming projects/Memphis05.jpg','Gaming projects/Memphis06.jpg'],
           year:'2023', tools:'Unity, Blender, CC4, Substance Painter' },
-        { title:'Life from the other room', desc:'Freelance work for Life From The Other Room, Berlin', cover:'Gaming projects/lighthouse01.png', tag:'Virtual Reality Experience',
+        { title:'Life from the other room', desc:'Freelance work for Life From The Other Room, Berlin', cover:'Gaming projects/lighthouse01.png', tag:'VR Experience',
           media:['Gaming projects/lighthouse02.png','Gaming projects/lighthouse03.png','Gaming projects/lighthouse04.png'],
           year:'2023' },
-        { title:'Biophilia', desc:'University project', cover:'Gaming projects/Biophilia01.png', tag:'VR, Photogrammetry Scan',
+        { title:'Biophilia', desc:'University project', cover:'Gaming projects/Biophilia01.png', tag:'VR, Photogrammetry',
           media:['Gaming projects/Biophilia02.png','Gaming projects/Biophilia03.png','Gaming projects/Biophilia04.png','Gaming projects/Biophilia05.png'],
           year:'2023', tools:'Photogrammetry scans, Unity, spacial.io',
           text:'Biophilia examines the alienation of humans from nature in an increasingly digitized world, revealing how digitalization can foster loneliness, darkness, and estrangement. However, the project also offers a path back to the sensuality of nature within a VR space.' },
         /* Das 5. Projekt führt auf die Seite mit den 3D-Ansichten und Downloads. */
-        { title:'Gaming Assets', desc:'Models, props and environments', cover:'models/cat.glb', ratio:'16/9', tag:'3D Models', go:'assets' }
+        { title:'Gaming Asset Catalogue', desc:'Models, props and environments', cover:'models/cat.glb', ratio:'16/9', tag:'3D Models', go:'assets' }
       ]
     }
   };
@@ -787,6 +798,64 @@ body.dark .pl i{color:#5A5A5A}
 
   /* Masonry mit 2 Spalten: jede Kachel kommt in die jeweils kürzere Spalte */
   function layoutGallery(){
+    const g = document.getElementById('gallery');
+    if (!g || !g.clientWidth || g.classList.contains('rows')) return;
+    const w = g.clientWidth, gap = Math.round(Math.min(32, Math.max(12, innerWidth * .018)));
+    const cw = (w - gap) / 2, hs = [0, 0];
+    [...g.children].forEach(el => {
+      const ar = parseFloat(el.style.getPropertyValue('--ar')) || DEFAULT_R;
+      if (ar >= 1.9){                                  /* Panorama: über beide Spalten */
+        el.style.width = w + 'px';
+        const y = Math.max(hs[0], hs[1]);
+        el.style.transform = `translate(0px,${y}px)`;
+        hs[0] = hs[1] = y + el.offsetHeight + gap;
+      } else {
+        el.style.width = cw + 'px';
+        const c = hs[0] <= hs[1] ? 0 : 1;
+        el.style.transform = `translate(${c*(cw+gap)}px,${hs[c]}px)`;
+        hs[c] += el.offsetHeight + gap;
+      }
+    });
+    g.style.height = Math.max(0, Math.max(...hs) - gap) + 'px';
+  }
+  function queueGallery(){ cancelAnimationFrame(galRaf); galRaf = requestAnimationFrame(layoutGallery); }
+
+  function buildProject(i){
+    const p = projects[i];
+    if (projIO) projIO.disconnect();
+    if (projRO) projRO.disconnect();
+    const rowsMode = Array.isArray(p.rows) && p.rows.length > 0;
+    const stTag = (f,k) => `<div class="st${isTr(f) ? ' tr' : ''}" data-k="${k}">${mediaTag(f, 'strip')}</div>`;
+    const files = rowsMode ? p.rows.flat() : [p.first || p.cover, ...(p.media || [])];
+    let k0 = 0;
+    const tiles = rowsMode
+      ? p.rows.map(r => `<div class="grow${r.length > 3 ? ' many' : ''}" style="--n:${r.length}">${r.map(f => stTag(f, k0++)).join('')}</div>`).join('')
+      : files.map(stTag).join('');
+    const long = p.text ? `<p class="txtp">${p.text}</p>` : '';
+    const metaHtml = `<div class="pmeta"><div class="mi"><span>Year</span><b>${p.year || '2026'}</b></div><div class="mi"><span>Tools</span><b>${p.tools || collections[col].tools}</b></div><div class="mi"><span>Role</span><b>${p.role || collections[col].role}</b></div></div>`;
+    const plHtml = `<div class="pl"><i>${pad(i+1)}/</i><b>${p.desc}</b></div>`;
+    const nxHtml = `<a class="nx" href="#${projHash((i+1) % n)}">Next project</a>`;
+    const galHtml = `<div class="gallery${rowsMode ? ' rows' : ''}" id="gallery">${tiles}</div>`;
+    document.getElementById('pj').innerHTML = p.layout === 'top'
+      ? `<div class="pp top">
+          <header class="ptop">
+            <h1>${p.title}</h1>
+            ${metaHtml}
+            <div class="pbot">${plHtml}${long}</div>
+          </header>
+          ${galHtml}
+          ${nxHtml}
+        </div>`
+      : `<div class="pp">
+          <aside class="pside">
+            <h1>${p.title}</h1>
+            ${metaHtml}
+            ${plHtml}
+            ${long}
+            ${nxHtml}
+          </aside>
+          ${galHtml}
+        </div>`;
     const g = document.getElementById('gallery');
     if (!g || !g.clientWidth || g.classList.contains('rows')) return;
     const w = g.clientWidth, gap = Math.round(Math.min(32, Math.max(12, innerWidth * .018)));
