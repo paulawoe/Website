@@ -134,6 +134,25 @@ body::before{content:"";position:fixed;z-index:10;inset:0 0 auto;height:env(safe
 .gcap b{font-family:var(--display);font-weight:500;font-size:15px;letter-spacing:-.01em;text-decoration:underline;text-decoration-color:transparent;text-underline-offset:4px;transition:text-decoration-color .2s}
 .gcell:hover .gcap b,.gcell:focus-visible .gcap b{text-decoration-color:currentColor}
 
+/* Feed: alle Projekte untereinander, jedes mit Titelzeile und ALLEN Bildern/Videos als Galerie */
+#feed{display:block}
+.fproj{margin-bottom:clamp(80px,12vw,180px)}
+.fhead{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1.6fr) minmax(0,1.2fr) auto;gap:16px clamp(16px,2.4vw,40px);align-items:start;margin-bottom:16px;font-size:12px;line-height:1.35;text-transform:uppercase;letter-spacing:.02em}
+.fhead>div{display:flex;flex-direction:column;gap:2px}
+.fl{color:var(--light-mute)}
+.fl2{margin-top:8px}
+.ft{font-family:var(--display);font-weight:500;font-size:clamp(20px,2.2vw,32px);letter-spacing:-.03em;line-height:1.05;color:inherit;text-decoration:none}
+a.ft:hover{text-decoration:underline;text-underline-offset:4px}
+.fy{text-align:right;align-items:flex-end}
+.fh-more{margin-top:6px;color:inherit;text-decoration:underline;text-underline-offset:4px;width:max-content}
+.fgal .st{position:relative;left:auto;top:auto;width:100%;transform:none}
+.fgal.fcols{position:relative}                      /* Masonry: Positionen berechnet layoutFeedGal() */
+.fgal.fcols .st{position:absolute;left:0;top:0}
+.fgal.fcols.one .st{position:relative}
+.fgal.one .st{width:min(100%,calc(78vh * var(--ar,.818)))}
+@media (max-width:900px){.fhead{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.fy{align-items:flex-start;text-align:left}}
+@media (max-width:700px){.fhead{grid-template-columns:1fr}}
+
 /* Liste */
 #list{border-top:1px solid var(--light-ink)}
 .row{color:var(--light-ink);text-decoration:none;display:grid;grid-template-columns:56px minmax(0,1.3fr) minmax(0,2fr) minmax(0,1fr) 56px;gap:16px;align-items:baseline;padding:16px 0;border-bottom:1px solid #D8D8D8;font-size:12px;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;transition:opacity .2s}
@@ -317,11 +336,13 @@ body.dark .pl i{color:#5A5A5A}
       <div class="modes" role="group" aria-label="View">
         <button type="button" data-mode="grid" class="on">Grid</button>
         <button type="button" data-mode="list">List</button>
+        <button type="button" data-mode="feed">Feed</button>
       </div>
     </div>
   </div>
   <div id="ggrid"></div>
   <div id="list" hidden></div>
+  <div id="feed" hidden></div>
 </section>
 
 <section class="detail a" id="view-p" hidden>
@@ -462,7 +483,7 @@ body.dark .pl i{color:#5A5A5A}
   const parseR = s => { const [a,b] = String(s).split('/').map(Number); return a/(b||1) || DEFAULT_R; };
   const collections = {
     high: {
-      title:'High Poly', cols:3, ratio:'1080/1320', uniform:true, tag:'3D Animation', tools:'Blender, After Effects', role:'Modeling, Animation, Rendering',
+      title:'High Poly', cols:3, feedCols:3, ratio:'1080/1320', uniform:true, tag:'3D Animation', tools:'Blender, After Effects', role:'Modeling, Animation, Rendering',
       projects: [
         { title:'300.000 Volt', desc:'Von nun an jagt die Beute', cover:'videos/LABUBU_2.mp4',
           media:['videos/FAECHER_01_2.mp4','videos/PEZ_2.mp4','videos/WURFSTERN_2.mp4','videos/TAMAGOTCHIE_01_1.mp4'],
@@ -513,7 +534,7 @@ body.dark .pl i{color:#5A5A5A}
       ]
     },
     low: {
-      title:'Low Poly', cols:2, ratio:'16/9', uniform:true, tag:'Game Asset', tools:'Blender', role:'Modeling, Texturing',
+      title:'Low Poly', cols:2, feedCols:2, ratio:'16/9', uniform:true, tag:'Game Asset', tools:'Blender', role:'Modeling, Texturing',
       projects: [
         { title:'Light to the nations', desc:'Installation by Yael Bartana, Biennale Arte Venice 2024', cover:'Gaming projects/Venedig02.jpg', tag:'3D-Dome Projection',
           media:['Gaming projects/Venedig03.jpg','Gaming projects/Venedig04.jpg','Gaming projects/Venedig05.jpg','Gaming projects/Venedig06.jpg','Gaming projects/Venedig07.jpg'],
@@ -661,11 +682,12 @@ body.dark .pl i{color:#5A5A5A}
   }
 
   /* Projektseite: Format eines Mediums merken, dann Galerie neu anordnen */
-  function placeSt(st, ar){ st.style.setProperty('--ar', String(ar)); queueGallery(); }
+  function placeSt(st, ar){ st.style.setProperty('--ar', String(ar)); queueGallery(); queueFeed(); }
 
   /* ---------- Raster (Masonry) ---------- */
   const gridEl = document.getElementById('ggrid');
   const listEl = document.getElementById('list');
+  const feedEl = document.getElementById('feed');
   const pad = v => String(v).padStart(2,'0');
 
   let cells = [], builtCol = null, ovIO = null;
@@ -749,6 +771,60 @@ body.dark .pl i{color:#5A5A5A}
   });
   listEl.addEventListener('pointerleave', hidePeek);
 
+  /* ---------- Feed: jedes Projekt mit Titelzeile und allen Medien als Galerie ---------- */
+  function feedProject(p, i, C){
+    const rowsMode = Array.isArray(p.rows) && p.rows.length > 0;
+    const files = rowsMode ? p.rows.flat() : [p.first || p.cover, ...(p.media || [])];
+    const st = f => `<div class="st${isTr(f) ? ' tr' : ''}" style="--ar:${defR(C)}">${mediaTag(f, 'strip')}</div>`;
+    const maxCols = C.feedCols || 3;
+    const fc = files.length === 1 ? 1 : Math.min(files.length, maxCols);
+    const gal = rowsMode
+      ? `<div class="fgal gallery rows">${p.rows.map(r => `<div class="grow${r.length > 3 ? ' many' : ''}" style="--n:${r.length}">${r.map(st).join('')}</div>`).join('')}</div>`
+      : `<div class="fgal fcols${files.length === 1 ? ' one' : ''}" data-fc="${fc}">${files.map(st).join('')}</div>`;
+    const more = p.text ? `<a class="fh-more" href="#${projHash(i)}">Read more</a>` : '';
+    return `<section class="fproj">
+      <header class="fhead">
+        <div><span class="fl">Project</span><a class="ft" href="#${projHash(i)}">${p.title}</a></div>
+        <div><span class="fl">${p.tag || C.tag}</span><span>${p.desc}</span>${more}</div>
+        <div><span class="fl">Role</span><span>${p.role || C.role}</span><span class="fl fl2">Tools</span><span>${p.tools || C.tools}</span></div>
+        <div class="fy"><span class="fl">${p.year || ''}</span><span class="ft">${pad(i+1)}</span></div>
+      </header>
+      ${gal}
+    </section>`;
+  }
+
+  /* Masonry im Feed: jedes Bild kommt in die jeweils kürzeste Spalte, Panoramen laufen über alle Spalten */
+  function layoutFeedGal(g){
+    const w = g.clientWidth; if (!w) return;
+    const fc = innerWidth < 700 ? 1 : (+g.dataset.fc || 3);
+    const gap = Math.round(Math.min(24, Math.max(12, innerWidth * .016)));
+    const cw = (w - gap * (fc - 1)) / fc, hs = new Array(fc).fill(0);
+    [...g.children].forEach(el => {
+      const ar = parseFloat(el.style.getPropertyValue('--ar')) || DEFAULT_R;
+      if (fc > 1 && ar >= 1.9){
+        el.style.width = w + 'px';
+        const y = Math.max(...hs);
+        el.style.transform = `translate(0px,${y}px)`;
+        hs.fill(y + el.offsetHeight + gap);
+      } else {
+        el.style.width = cw + 'px';
+        const c = hs.indexOf(Math.min(...hs));
+        el.style.transform = `translate(${c * (cw + gap)}px,${hs[c]}px)`;
+        hs[c] += el.offsetHeight + gap;
+      }
+    });
+    g.style.height = Math.max(0, Math.max(...hs) - gap) + 'px';
+  }
+  let feedRaf = 0;
+  function queueFeed(){ cancelAnimationFrame(feedRaf); feedRaf = requestAnimationFrame(() => { if (!feedEl.hidden) feedEl.querySelectorAll('.fgal.fcols:not(.one)').forEach(layoutFeedGal); }); }
+  new ResizeObserver(queueFeed).observe(feedEl);
+
+  /* ---------- Feed: Videos laufen, solange sie gut im Bild sind ---------- */
+  const feedIO = new IntersectionObserver(es => es.forEach(e => {
+    const v = e.target.querySelector('video'); if (!v) return;
+    if (e.isIntersecting){ ensureSrc(v); v.play().catch(() => {}); } else v.pause();
+  }), { threshold:.25 });
+
   /* ---------- Übersicht für den gewählten Bereich (High / Low Poly) aufbauen ---------- */
   function buildOverview(){
     builtCol = col;
@@ -762,6 +838,10 @@ body.dark .pl i{color:#5A5A5A}
        </article>`).join('');
     cells = [...gridEl.children];
     lazyScan(gridEl);
+    feedIO.disconnect();
+    feedEl.innerHTML = projects.map((p,i) => feedProject(p, i, C)).join('');
+    lazyScan(feedEl);
+    feedEl.querySelectorAll('.st').forEach(el => feedIO.observe(el));
     cells.forEach(c => { if (projects[+c.dataset.i].ratio) c.dataset.fixed = '1'; });
     gridEl.style.height = '0px';
     listEl.innerHTML = projects.map((p,i) =>
@@ -788,8 +868,9 @@ body.dark .pl i{color:#5A5A5A}
   /* ---------- Raster / Liste umschalten ---------- */
   function setMode(m){
     document.querySelectorAll('.modes button').forEach(b => b.classList.toggle('on', b.dataset.mode === m));
-    gridEl.hidden = m !== 'grid'; listEl.hidden = m !== 'list';
+    gridEl.hidden = m !== 'grid'; listEl.hidden = m !== 'list'; feedEl.hidden = m !== 'feed';
     if (m === 'grid') queueLayout(); else stopAll();
+    if (m === 'feed') queueFeed();
   }
   document.querySelectorAll('.modes button').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
 
@@ -857,51 +938,6 @@ body.dark .pl i{color:#5A5A5A}
           ${galHtml}
         </div>`;
     const g = document.getElementById('gallery');
-    if (!g || !g.clientWidth || g.classList.contains('rows')) return;
-    const w = g.clientWidth, gap = Math.round(Math.min(32, Math.max(12, innerWidth * .018)));
-    const cw = (w - gap) / 2, hs = [0, 0];
-    [...g.children].forEach(el => {
-      const ar = parseFloat(el.style.getPropertyValue('--ar')) || DEFAULT_R;
-      if (ar >= 1.9){                                  /* Panorama: über beide Spalten */
-        el.style.width = w + 'px';
-        const y = Math.max(hs[0], hs[1]);
-        el.style.transform = `translate(0px,${y}px)`;
-        hs[0] = hs[1] = y + el.offsetHeight + gap;
-      } else {
-        el.style.width = cw + 'px';
-        const c = hs[0] <= hs[1] ? 0 : 1;
-        el.style.transform = `translate(${c*(cw+gap)}px,${hs[c]}px)`;
-        hs[c] += el.offsetHeight + gap;
-      }
-    });
-    g.style.height = Math.max(0, Math.max(...hs) - gap) + 'px';
-  }
-  function queueGallery(){ cancelAnimationFrame(galRaf); galRaf = requestAnimationFrame(layoutGallery); }
-
-  function buildProject(i){
-    const p = projects[i];
-    if (projIO) projIO.disconnect();
-    if (projRO) projRO.disconnect();
-    const rowsMode = Array.isArray(p.rows) && p.rows.length > 0;
-    const stTag = (f,k) => `<div class="st${isTr(f) ? ' tr' : ''}" data-k="${k}">${mediaTag(f, 'strip')}</div>`;
-    const files = rowsMode ? p.rows.flat() : [p.first || p.cover, ...(p.media || [])];
-    let k0 = 0;
-    const tiles = rowsMode
-      ? p.rows.map(r => `<div class="grow${r.length > 3 ? ' many' : ''}" style="--n:${r.length}">${r.map(f => stTag(f, k0++)).join('')}</div>`).join('')
-      : files.map(stTag).join('');
-    const long = p.text ? `<p class="txtp">${p.text}</p>` : '';
-    document.getElementById('pj').innerHTML =
-      `<div class="pp">
-        <aside class="pside">
-          <h1>${p.title}</h1>
-          <div class="pmeta"><div class="mi"><span>Year</span><b>${p.year || '2026'}</b></div><div class="mi"><span>Tools</span><b>${p.tools || collections[col].tools}</b></div><div class="mi"><span>Role</span><b>${p.role || collections[col].role}</b></div></div>
-          <div class="pl"><i>${pad(i+1)}/</i><b>${p.desc}</b></div>
-          ${long}
-          <a class="nx" href="#${projHash((i+1) % n)}">Next project</a>
-        </aside>
-        <div class="gallery${rowsMode ? ' rows' : ''}" id="gallery">${tiles}</div>
-      </div>`;
-    const g = document.getElementById('gallery');
     const sts = [...g.querySelectorAll('.st')];
     lazyScan(g);
     sts.forEach(st => st.style.setProperty('--ar', String(files.length === 1 && ratios[i] ? ratios[i] : defR(collections[col]))));
@@ -962,6 +998,7 @@ body.dark .pl i{color:#5A5A5A}
   document.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => go(b.dataset.open)));
   document.querySelectorAll('[data-go]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); go(a.dataset.go); }));
   document.querySelectorAll('.bk').forEach(a => a.addEventListener('click', e => { e.preventDefault(); go(cur === 'p' ? col : cur === 'assets' ? 'low' : ''); }));
+  setMode(innerWidth < 700 ? 'feed' : 'grid');        /* Handy: Start im Feed, Desktop: im Raster */
   render();
 
   /* Vorab laden: Sobald die Seite steht, werden im Hintergrund schon die Vorschaubilder der ersten Kacheln geholt,
